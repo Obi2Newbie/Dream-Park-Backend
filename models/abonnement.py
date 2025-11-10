@@ -1,6 +1,38 @@
-from pydantic import BaseModel
+class Abonnement:
+    """
+    Représente un type d’abonnement proposé par le système DreamPark.
 
-class Abonnement(BaseModel):
-    libelle: str
-    prix: float
-    estPackGar: bool
+    Attributs :
+        libelle (str) : Nom ou désignation de l’abonnement.
+        prix (float) : Coût de l’abonnement, généralement exprimé en euros.
+        estPackGar (bool) : Indique si cet abonnement inclut le pack garanti.
+    """
+
+    def __init__(self, libelle, prix, estPackGar):
+        """
+        Initialise un nouvel abonnement avec ses caractéristiques principales.
+
+        Args:
+            libelle (str): Nom de l’abonnement.
+            prix (float): Montant de l’abonnement.
+            estPackGar (bool): True si l’abonnement comprend le pack garanti, False sinon.
+
+        Comportement attendu :
+            - Enregistre les informations de base liées à l’abonnement.
+            - Prépare l’objet pour être associé à un contrat ou un client.
+        """
+        pass
+
+    def addContrat(self, contrat):
+        """
+        Associe un contrat à cet abonnement.
+
+        Args:
+            contrat (Contrat): Objet représentant le contrat lié à cet abonnement.
+
+        Comportement attendu :
+            - Lie le contrat fourni à cet abonnement.
+            - Permet de suivre la durée et le statut de l’abonnement.
+            - Peut servir à gérer les renouvellements ou résiliations.
+        """
+        pass
