@@ -24,3 +24,8 @@ pip install pydantic
 ```bash
 uvicorn main:app --reload
 ```
+
+## Running unit test
+```bash
+python -m unittest discover -s tests
+```
