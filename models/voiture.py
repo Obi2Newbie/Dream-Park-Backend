@@ -37,3 +37,81 @@ class Voiture:
             - Peut notifier le système central du changement d’état du véhicule.
         """
         pass
+
+    def obtenirHauteur(self):
+        """
+        Retourne la hauteur actuelle du véhicule.
+
+        Returns:
+            float: La hauteur du véhicule (en mètres).
+
+        Comportement attendu :
+            - Fournit la valeur enregistrée de la hauteur du véhicule.
+            - Utilisé notamment par la caméra ou le système de vérification de gabarit.
+        """
+        pass
+
+    def definirHauteur(self, hauteur):
+        """
+        Définit la hauteur du véhicule.
+
+        Args:
+            hauteur (float): Nouvelle valeur de la hauteur (en mètres).
+
+        Comportement attendu :
+            - Met à jour la hauteur enregistrée du véhicule.
+            - Peut être appelée après une mesure effectuée par la caméra.
+        """
+        pass
+
+    def obtenirLongueur(self):
+        """
+        Retourne la longueur actuelle du véhicule.
+
+        Returns:
+            float: La longueur du véhicule (en mètres).
+
+        Comportement attendu :
+            - Fournit la valeur enregistrée de la longueur du véhicule.
+            - Utilisé pour déterminer la compatibilité avec les emplacements disponibles.
+        """
+        pass
+
+    def definirLongueur(self, longueur):
+        """
+        Définit la longueur du véhicule.
+
+        Args:
+            longueur (float): Nouvelle valeur de la longueur (en mètres).
+
+        Comportement attendu :
+            - Met à jour la longueur du véhicule.
+            - Peut être appelée après une mesure effectuée par la caméra ou le capteur.
+        """
+        pass
+
+    def obtenirImmatriculation(self):
+        """
+        Retourne l’immatriculation actuelle du véhicule.
+
+        Returns:
+            str: Numéro d’immatriculation du véhicule.
+
+        Comportement attendu :
+            - Fournit la plaque d’immatriculation du véhicule.
+            - Sert à identifier le véhicule lors des entrées/sorties ou pour les abonnements.
+        """
+        pass
+
+    def definirImmatriculation(self, immatriculation):
+        """
+        Définit le numéro d’immatriculation du véhicule.
+
+        Args:
+            immatriculation (str): Nouvelle immatriculation du véhicule.
+
+        Comportement attendu :
+            - Met à jour l’immatriculation enregistrée.
+            - Peut être appelée après une reconnaissance optique de la plaque par la caméra.
+        """
+        pass
