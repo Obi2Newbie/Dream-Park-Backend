@@ -9,7 +9,7 @@ class Voiture:
         estDansParking (bool) : Indique si le véhicule est actuellement stationné dans le parking.
     """
 
-    def __init__(self, hauteur, longueur, immatriculation, estDansParking):
+    def __init__(self, hauteur, longueur, immatriculation, estDansParking = False):
         """
         Initialise une nouvelle voiture avec ses caractéristiques physiques
         et son statut de stationnement.
@@ -21,7 +21,10 @@ class Voiture:
             estDansParking (bool, optionnel): True si le véhicule est déjà stationné
                 dans le parking (par défaut False).
         """
-        pass
+        self.__hauteur = hauteur
+        self.__longueur = longueur
+        self.__immatriculation = immatriculation
+        self.estDansParking = estDansParking
 
     def addPlacementV(self, p):
         """
@@ -37,3 +40,82 @@ class Voiture:
             - Peut notifier le système central du changement d’état du véhicule.
         """
         pass
+
+    def obtenirHauteur(self):
+        """
+        Retourne la hauteur actuelle du véhicule.
+
+        Returns:
+            float: La hauteur du véhicule (en mètres).
+
+        Comportement attendu :
+            - Fournit la valeur enregistrée de la hauteur du véhicule.
+            - Utilisé notamment par la caméra ou le système de vérification de gabarit.
+        """
+        return self.__hauteur
+
+    def definirHauteur(self, hauteur):
+        """
+        Définit la hauteur du véhicule.
+
+        Args:
+            hauteur (float): Nouvelle valeur de la hauteur (en mètres).
+
+        Comportement attendu :
+            - Met à jour la hauteur enregistrée du véhicule.
+            - Peut être appelée après une mesure effectuée par la caméra.
+        """
+        self.__hauteur = hauteur
+
+    def obtenirLongueur(self):
+        """
+        Retourne la longueur actuelle du véhicule.
+
+        Returns:
+            float: La longueur du véhicule (en mètres).
+
+        Comportement attendu :
+            - Fournit la valeur enregistrée de la longueur du véhicule.
+            - Utilisé pour déterminer la compatibilité avec les emplacements disponibles.
+        """
+        return self.__longueur
+
+    def definirLongueur(self, longueur):
+        """
+        Définit la longueur du véhicule.
+
+        Args:
+            longueur (float): Nouvelle valeur de la longueur (en mètres).
+
+        Comportement attendu :
+            - Met à jour la longueur du véhicule.
+            - Peut être appelée après une mesure effectuée par la caméra ou le capteur.
+        """
+        self.__longueur = longueur
+
+    def obtenirImmatriculation(self):
+        """
+        Retourne l’immatriculation actuelle du véhicule.
+
+        Returns:
+            str: Numéro d’immatriculation du véhicule.
+
+        Comportement attendu :
+            - Fournit la plaque d’immatriculation du véhicule.
+            - Sert à identifier le véhicule lors des entrées/sorties ou pour les abonnements.
+        """
+        return self.__immatriculation
+
+    def definirImmatriculation(self, immatriculation):
+        """
+        Définit le numéro d’immatriculation du véhicule.
+
+        Args:
+            immatriculation (str): Nouvelle immatriculation du véhicule.
+
+        Comportement attendu :
+            - Met à jour l’immatriculation enregistrée.
+            - Peut être appelée après une reconnaissance optique de la plaque par la caméra.
+        """
+        self.__immatriculation = immatriculation
+

@@ -35,7 +35,7 @@ class Camera:
             - Met à jour l’objet `Voiture` avec la hauteur capturée.
             - Peut enregistrer la donnée pour le contrôle de compatibilité avec les places disponibles.
         """
-        pass
+        return v.__hauteur
 
     def capturerLongueur(self, v):
         """
@@ -52,7 +52,7 @@ class Camera:
             - Met à jour l’objet `Voiture` avec la longueur détectée.
             - Peut être utilisé pour déterminer si le véhicule peut entrer dans une place donnée.
         """
-        pass
+        return v.__longueur
 
     def capturerImmatr(self, v):
         """
@@ -69,4 +69,4 @@ class Camera:
             - Met à jour l’objet `Voiture` avec le numéro d’immatriculation.
             - Sert à vérifier la correspondance avec un client ou un abonnement enregistré.
         """
-        pass
+        return v.__immatriculation
