@@ -1,4 +1,5 @@
-import pydoc
+from models import Voiture, Abonnement
+
 class Client:
     """
     Représente un client du système DreamPark.
@@ -22,7 +23,11 @@ class Client:
             estSuperAbonne (bool, optionnel): Statut de pack garanti (par défaut False).
             nbFrequentation (int, optionnel): Nombre initial de fréquentations (par défaut 0).
         """
-        pass
+        self.nom = nom
+        self.adresse = adresse
+        self.estAbonne = estAbonne
+        self.estSuperAbonne = estSuperAbonne
+        self.nbFrequentation = nbFrequentation
 
     def sAbonner(self, ab):
         """
@@ -52,7 +57,11 @@ class Client:
             - Associe le véhicule à ce client.
             - Vérifie la validité de l’immatriculation.
         """
-        pass
+        voiture = Voiture
+        voiture.definirHauteur(hautV)
+        voiture.definirLongueur(longV)
+        voiture.definirImmatriculation(imma)
+
 
     def seDesabonner(self):
         """

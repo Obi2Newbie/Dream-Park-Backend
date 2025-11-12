@@ -1,4 +1,4 @@
-from models.voiture import Voiture
+from models import Voiture
 
 class Camera:
     """
@@ -8,18 +8,6 @@ class Camera:
     Les caméras sont généralement placées aux accès afin de mesurer
     les dimensions du véhicule et d’identifier son immatriculation.
     """
-
-    def __init__(self):
-        """
-        Initialise un objet `Camera`.
-
-        Comportement attendu :
-            - Prépare la caméra pour effectuer des mesures et des captures d’informations.
-            - Peut initialiser les paramètres de calibration ou de positionnement.
-            - Les détails de configuration sont définis ultérieurement selon le type de caméra.
-        """
-        pass
-
     def capturerHauteur(self, v):
         """
         Capture et renvoie la hauteur du véhicule.
@@ -35,7 +23,7 @@ class Camera:
             - Met à jour l’objet `Voiture` avec la hauteur capturée.
             - Peut enregistrer la donnée pour le contrôle de compatibilité avec les places disponibles.
         """
-        return v.__hauteur
+        return v.obtenirHauteur()
 
     def capturerLongueur(self, v):
         """
@@ -52,7 +40,7 @@ class Camera:
             - Met à jour l’objet `Voiture` avec la longueur détectée.
             - Peut être utilisé pour déterminer si le véhicule peut entrer dans une place donnée.
         """
-        return v.__longueur
+        return v.obtenirLongueur()
 
     def capturerImmatr(self, v):
         """
@@ -69,4 +57,4 @@ class Camera:
             - Met à jour l’objet `Voiture` avec le numéro d’immatriculation.
             - Sert à vérifier la correspondance avec un client ou un abonnement enregistré.
         """
-        return v.__immatriculation
+        return v.obtenirImmatriculation()
