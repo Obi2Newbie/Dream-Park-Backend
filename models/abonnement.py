@@ -21,7 +21,9 @@ class Abonnement:
             - Enregistre les informations de base liées à l’abonnement.
             - Prépare l’objet pour être associé à un contrat ou un client.
         """
-        pass
+        self.libelle = libelle
+        self.prix = prix
+        self.estPackGar = estPackGar
 
     def addContrat(self, contrat):
         """
