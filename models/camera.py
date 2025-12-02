@@ -1,4 +1,4 @@
-from models import Voiture
+from .voiture import Voiture
 
 class Camera:
     """

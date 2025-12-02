@@ -1,3 +1,5 @@
+from .placement import Placement
+
 class Abonnement:
     """
     Représente un type d’abonnement proposé par le système DreamPark.
@@ -38,3 +40,12 @@ class Abonnement:
             - Peut servir à gérer les renouvellements ou résiliations.
         """
         pass
+
+    def addContrat(self, contrat):
+        """
+        Associe un contrat a cet abonnement.
+
+        Args:
+            contrat (Contrat): Objet representant le contrat lie
+        """
+        self.contrat = contrat

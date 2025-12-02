@@ -5,28 +5,29 @@ Permet des imports simplifiés :
     from models import Client, Voiture, Parking
 """
 
-from abonnement import Abonnement
-from acces import Acces
-from borne_ticket import Borne_ticket
-from camera import Camera
-from client import Client
-from contrat import Contrat
-from entretien import Entretien
-from livraison import Livraison
-from maintenance import Maintenance
-from panneau_affichage import Panneau_affichage
-from parking import Parking
-from place import Place
-from placement import Placement
-from service import Service
-from teleporteur import Teleporteur
-from voiture import Voiture
-from voiturier import Voiturier
+from .abonnement import Abonnement
+from .acces import Acces
+from .borne_ticket import BorneTicket, Ticket
+from .camera import Camera
+from .client import Client
+from .contrat import Contrat
+from .entretien import Entretien
+from .livraison import Livraison
+from .maintenance import Maintenance
+from .panneau_affichage import Panneau_affichage
+from .parking import Parking
+from .place import Place
+from .placement import Placement
+from .service import Service
+from .teleporteur import Teleporteur
+from .voiture import Voiture
+from .voiturier import Voiturier
 
 __all__ = [
     "Abonnement",
     "Acces",
-    "Borne_ticket",
+    "BorneTicket",
+    "Ticket",
     "Camera",
     "Client",
     "Contrat",
@@ -40,6 +41,5 @@ __all__ = [
     "Service",
     "Teleporteur",
     "Voiture",
-    "Voiture"
+    "Voiturier"
 ]
-
