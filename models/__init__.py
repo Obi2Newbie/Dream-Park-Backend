@@ -28,8 +28,7 @@ from .voiturier import Voiturier
 __all__ = [
     "Abonnement",
     "Acces",
-    "BorneTicket",
-    "Ticket",
+    "Borne_ticket",
     "Camera",
     "Client",
     "Contrat",
