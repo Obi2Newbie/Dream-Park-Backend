@@ -15,18 +15,7 @@ class Teleporteur:
             - Peut initialiser les ressources techniques nécessaires (plateforme, bras mécanique, etc.).
             - Les paramètres de configuration sont définis ultérieurement.
         """
-        self.id_teleporteur = 1
-        self.occupe = False
-        self.vehicule_en_cours = None
-
-    def estDisponible(self):
-        """
-        Verifie si le teleporteur est disponible.
-
-         Returns:
-        bool: True si disponible, False sinon
-        """
-        return not self.occupe
+        pass
 
     def teleporterVoiture(self, v, p):
         """
@@ -62,37 +51,3 @@ class Teleporteur:
             - Confirme la réussite de l’opération via un message ou un rapport système.
         """
         pass
-
-    def teleporterEntree(self, voiture, id_place):
-        """
-        Teleporte un vehicule vers sa place assignee.
-
-        Args:
-            voiture (Voiture): Le vehicule a teleporter
-            id_place (int): Identifiant de la place de destination
-
-        Returns:
-            bool: True si succes, False sinon
-        """
-        if not self.estDisponible():
-            print(f"Teleporteur {self.id_teleporteur} occupe")
-            return False
-
-        try:
-            self.occupe = True
-            self.vehicule_en_cours = voiture
-
-            print(f"Teleportation de {voiture.immatriculation} vers place {id_place}")
-
-            # Simulation de la teleportation
-            # Dans une vraie application: animation, verification compatibilite, etc.
-
-            self.occupe = False
-            self.vehicule_en_cours = None
-
-            return True
-        except Exception as e:
-            print(f"Erreur teleportation: {e}")
-            self.occupe = False
-            self.vehicule_en_cours = None
-            return False

@@ -67,15 +67,3 @@ class Acces:
             - Gère les cas où le parking est complet ou la carte d’abonnement est invalide.
         """
         pass
-
-    def obtenirTeleporteurDisponible(self):
-        """
-        Recherche un teleporteur disponible parmi ceux de l'acces.
-
-        Returns:
-            Teleporteur: Un teleporteur disponible ou None
-        """
-        for teleporteur in self.teleporteurs:
-            if teleporteur.estDisponible():
-                return teleporteur
-        return None

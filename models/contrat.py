@@ -1,42 +1,31 @@
-from datetime import datetime, timedelta
-
-
 class Contrat:
     """
-    Represente un contrat liant un client a un abonnement.
-    Le contrat a une date de debut et une duree.
+    Représente un contrat liant un client au système DreamPark,
+    par exemple un contrat d'abonnement ou de service.
+
+    Attributs :
+        dateDebut (date) : Date de début du contrat.
+        dateFin (date) : Date de fin prévue du contrat.
+        estEnCours (bool) : Indique si le contrat est toujours actif.
     """
 
-    def __init__(self, date_debut, duree_jours):
+    def __init__(self, dateDebut, dateFin, estEnCours):
         """
-        Initialise un contrat.
+        Initialise un nouvel objet Contrat.
 
-        Args:
-            date_debut (datetime): Date de debut du contrat
-            duree_jours (int): Duree du contrat en jours
-        """
-        self.date_debut = date_debut
-        self.duree_jours = duree_jours
-        self.date_fin = date_debut + timedelta(days=duree_jours)
-        self.abonnement = None
+        Attributs:
+            dateDebut (date): Date à laquelle le contrat entre en vigueur.
+            dateFin (date): Date prévue pour la fin du contrat.
+            estEnCours (bool): True si le contrat est actuellement actif.
 
-    def estValide(self):
+        Comportement attendu :
+            - Enregistre les dates de début et de fin.
+            - Définit le statut du contrat (actif ou terminé).
         """
-        Verifie si le contrat est encore valide.
+        pass
 
-        Returns:
-            bool: True si valide, False sinon
+    def rompreContract(self):
         """
-        return datetime.now() < self.date_fin
-
-    def jours_restants(self):
+        Met fin au contrat actuel avant sa date de fin prévue.
         """
-        Calcule le nombre de jours restants avant expiration.
-
-        Returns:
-            int: Nombre de jours restants
-        """
-        if not self.estValide():
-            return 0
-        delta = self.date_fin - datetime.now()
-        return delta.days
+        pass
