@@ -1,3 +1,5 @@
+from .placement import Placement
+
 class Voiture:
     """
     Représente une voiture gérée par le système DreamPark.

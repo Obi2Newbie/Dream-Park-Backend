@@ -1,101 +1,273 @@
-class Borne_ticket:
+"""
+Module de gestion de la borne et des tickets du parking DreamPark.
+Auteur: [VOTRE NOM]
+"""
+
+from datetime import datetime
+from .client import Client
+from .voiture import Voiture
+
+
+class BorneTicket:
     """
-    Représente une borne de ticket du système DreamPark.
-
-    Cette borne permet aux clients d’interagir avec le système du parking :
-        - Délivrance de tickets pour les clients non abonnés.
-        - Proposition de services ou d’abonnements.
-        - Gestion des informations de paiement et de carte.
+    Represente une borne d'acces equipee d'un systeme de delivrance de tickets.
+    La borne gere l'interaction avec le client pour le stationnement.
     """
 
-    def __init__(self):
+    def __init__(self, id_borne, acces):
         """
-        Initialise un objet `Borne_ticket`.
-
-        Comportement attendu :
-            - Prépare la borne à fonctionner pour la délivrance de tickets et la gestion client.
-            - Peut initialiser les composants matériels ou logiciels nécessaires (lecteur de carte, écran, etc.).
-            - Les détails d’initialisation seront définis ultérieurement selon le type de borne.
-        """
-        pass
-
-    def deliverTicket(self, c):
-        """
-        Délivre un ticket au client spécifié.
+        Initialise une borne de ticketing.
 
         Args:
-            c (Client): Objet représentant le client demandant un ticket.
+            id_borne (int): Identifiant unique de la borne
+            acces (Acces): Reference vers l'acces auquel la borne appartient
+        """
+        self.id_borne = id_borne
+        self.acces = acces
+        self.ticket_en_cours = None
+        self.abonnements_disponibles = self._initialiser_abonnements()
+        self.services_disponibles = self._initialiser_services()
+
+    def _initialiser_abonnements(self):
+        """
+        Initialise la liste des abonnements proposes aux clients.
 
         Returns:
-            string: Message confirmant la délivrance du ticket ou indiquant une erreur.
-
-        Comportement attendu :
-            - Génère un ticket pour un client non abonné.
-            - Enregistre les informations nécessaires (heure d’entrée, identifiant du ticket, etc.).
-            - Peut imprimer le ticket physiquement ou l’envoyer sous format numérique.
+            list: Liste de tuples (libelle, prix, estPackGar)
         """
-        pass
+        return [
+            ("Mensuel Standard", 50.0, False),
+            ("Annuel Premium", 500.0, False),
+            ("Pack Garanti Centre-Ville", 80.0, True)
+        ]
 
-    def proposerServices(self):
+    def _initialiser_services(self):
         """
-        Propose différents services disponibles via la borne.
+        Initialise la liste des services proposes aux abonnes.
 
         Returns:
-            string: Liste ou description textuelle des services proposés.
-
-        Comportement attendu :
-            - Présente les services offerts (entretien, lavage, maintenance, etc.).
-            - Permet au client de sélectionner une option parmi les propositions.
-            - Peut afficher les coûts ou les avantages associés.
+            list: Liste de tuples (nom_service, prix)
         """
-        pass
+        return [
+            ("Livraison", 15.0),
+            ("Entretien", 50.0),
+            ("Maintenance", 80.0)
+        ]
 
-    def proposerAbonnements(self, c, p):
+    def traiter_stationnement(self, client, id_place):
         """
-        Propose différents abonnements disponibles au client.
+        Traite le stationnement d'un client apres qu'une place soit trouvee.
+        Correspond au flux du diagramme d'activite a partir de "une place trouvee".
 
         Args:
-            c (Client): Objet représentant le client concerné.
-            p (Parking): Objet représentant le parking où l’abonnement est proposé.
+            client (Client): Le client qui souhaite se garer
+            id_place (int): Identifiant de la place assignee
 
         Returns:
-            string: Message ou liste des abonnements disponibles.
-
-        Comportement attendu :
-            - Affiche les formules d’abonnement en fonction du profil du client et du parking.
-            - Permet la souscription immédiate si le client accepte une offre.
-            - Peut inclure des offres spéciales ou des réductions pour les utilisateurs fréquents.
+            Ticket: Le ticket delivre ou None en cas d'echec
         """
-        pass
+        print(f"\nTraitement du stationnement pour {client.nom}")
+        print(f"Place assignee: {id_place}")
 
-    def recupererInfosCarte(self, c, p):
+        if client.estAbonne:
+            print("Client abonne detecte")
+            self._traiter_client_abonne(client)
+        else:
+            print("Client non-abonne")
+            self._traiter_client_non_abonne(client)
+
+        ticket = self._delivrer_ticket(client, id_place)
+
+        if ticket:
+            print(f"Ticket delivre: {ticket.numero_ticket}")
+
+            succes_teleportation = self._actionner_teleporteur(ticket)
+
+            if succes_teleportation:
+                print("Teleportation reussie")
+                return ticket
+            else:
+                print("Echec de la teleportation")
+                return None
+        else:
+            print("Echec de la delivrance du ticket")
+            return None
+
+    def _traiter_client_abonne(self, client):
         """
-        Récupère les informations de la carte d’accès ou de paiement d’un client.
+        Traite un client abonne en proposant la liste des services.
 
         Args:
-            c (Client): Objet représentant le client utilisant la borne.
-            p (Parking): Objet représentant le parking associé à la carte.
+            client (Client): Le client abonne
+        """
+        print("\n--- Services disponibles pour abonnes ---")
+
+        for i, (nom_service, prix) in enumerate(self.services_disponibles, 1):
+            print(f"{i}. {nom_service} - {prix} euros")
+
+        service_choisi = self._demander_choix_service()
+
+        if service_choisi:
+            client.ajouterService(service_choisi)
+            print(f"Service selectionne: {service_choisi[0]}")
+        else:
+            print("Aucun service supplementaire selectionne")
+
+    def _traiter_client_non_abonne(self, client):
+        """
+        Traite un client non-abonne en demandant le mode de paiement
+        et en proposant des abonnements.
+
+        Args:
+            client (Client): Le client non-abonne
+        """
+        print("\n--- Client non-abonne ---")
+
+        mode_paiement = self._demander_mode_paiement()
+        client.definirModePaiement(mode_paiement)
+        print(f"Mode de paiement: {mode_paiement}")
+
+        print("\n--- Abonnements disponibles ---")
+        for i, (libelle, prix, estPackGar) in enumerate(self.abonnements_disponibles, 1):
+            pack_info = " (Pack Garanti inclus)" if estPackGar else ""
+            print(f"{i}. {libelle} - {prix} euros/mois{pack_info}")
+
+        abonnement_choisi = self._demander_choix_abonnement()
+
+        if abonnement_choisi:
+            client.sAbonner(abonnement_choisi)
+            print(f"Abonnement souscrit: {abonnement_choisi[0]}")
+        else:
+            print("Aucun abonnement souscrit")
+
+    def _demander_choix_service(self):
+        """
+        Simule la demande de choix de service au client.
 
         Returns:
-            string: Informations de la carte ou message d’état (succès/échec).
-
-        Comportement attendu :
-            - Lit ou scanne la carte d’accès ou de paiement du client.
-            - Vérifie la validité de la carte (date d’expiration, abonnement actif, etc.).
-            - Met à jour les informations du client dans le système.
+            tuple: (nom_service, prix) ou None
         """
-        pass
+        return None
 
-    def proposerTypePaiement(self):
+    def _demander_mode_paiement(self):
         """
-        Propose différents modes de paiement disponibles via la borne.
+        Demande au client son mode de paiement.
 
         Returns:
-            string: Message ou liste des types de paiement proposés.
-
-        Comportement attendu :
-            - Affiche les options disponibles (espèces, carte bancaire, paiement mobile, etc.).
-            - Permet au client de choisir son mode de paiement préféré.
-            - Peut vérifier la disponibilité des terminaux avant validation.
+            str: "CB" ou "Especes"
         """
-        pass
+        return "CB"
+
+    def _demander_choix_abonnement(self):
+        """
+        Demande au client s'il souhaite souscrire a un abonnement.
+
+        Returns:
+            tuple: (libelle, prix, estPackGar) ou None
+        """
+        return None
+
+    def _delivrer_ticket(self, client, id_place):
+        """
+        Delivre un ticket au client pour le stationnement.
+
+        Args:
+            client (Client): Le client
+            id_place (int): Identifiant de la place assignee
+
+        Returns:
+            Ticket: Le ticket cree ou None en cas d'echec
+        """
+        try:
+            ticket = Ticket(client, id_place, datetime.now())
+            self.ticket_en_cours = ticket
+            return ticket
+        except Exception as e:
+            print(f"Erreur lors de la delivrance du ticket: {e}")
+            return None
+
+    def _actionner_teleporteur(self, ticket):
+        """
+        Active un teleporteur pour transporter le vehicule vers sa place.
+
+        Args:
+            ticket (Ticket): Le ticket contenant les informations
+
+        Returns:
+            bool: True si succes, False sinon
+        """
+        try:
+            teleporteur = self.acces.obtenirTeleporteurDisponible()
+
+            if teleporteur:
+                succes = teleporteur.teleporterEntree(
+                    ticket.client.voiture,
+                    ticket.id_place
+                )
+                return succes
+            else:
+                print("Aucun teleporteur disponible")
+                return False
+        except Exception as e:
+            print(f"Erreur lors de l'activation du teleporteur: {e}")
+            return False
+
+
+class Ticket:
+    """
+    Represente un ticket de stationnement delivre a un client.
+    """
+
+    _compteur = 0
+
+    def __init__(self, client, id_place, heure_entree):
+        """
+        Initialise un nouveau ticket.
+
+        Args:
+            client (Client): Le client proprietaire du ticket
+            id_place (int): Identifiant de la place assignee
+            heure_entree (datetime): Heure d'entree dans le parking
+        """
+        Ticket._compteur += 1
+        self.numero_ticket = f"TK{Ticket._compteur:06d}"
+        self.client = client
+        self.id_place = id_place
+        self.heure_entree = heure_entree
+        self.heure_sortie = None
+        self.montant = 0.0
+        self.paye = False
+
+    def calculer_duree(self):
+        """
+        Calcule la duree de stationnement en minutes.
+
+        Returns:
+            int: Duree en minutes ou 0 si pas encore sorti
+        """
+        if not self.heure_sortie:
+            return 0
+        duree = self.heure_sortie - self.heure_entree
+        return int(duree.total_seconds() / 60)
+
+    def calculer_montant(self, tarif_horaire=2.0):
+        """
+        Calcule le montant a payer selon le tarif horaire.
+
+        Args:
+            tarif_horaire (float): Tarif par heure
+
+        Returns:
+            float: Montant a payer
+        """
+        if self.client.estAbonne:
+            return 0.0
+
+        duree_minutes = self.calculer_duree()
+        duree_heures = duree_minutes / 60.0
+        self.montant = duree_heures * tarif_horaire
+        return self.montant
+
+    def marquer_paye(self):
+        """Marque le ticket comme paye."""
+        self.paye = True

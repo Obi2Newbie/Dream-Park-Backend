@@ -1,31 +1,42 @@
+from datetime import datetime, timedelta
+
+
 class Contrat:
     """
-    Représente un contrat liant un client au système DreamPark,
-    par exemple un contrat d'abonnement ou de service.
-
-    Attributs :
-        dateDebut (date) : Date de début du contrat.
-        dateFin (date) : Date de fin prévue du contrat.
-        estEnCours (bool) : Indique si le contrat est toujours actif.
+    Represente un contrat liant un client a un abonnement.
+    Le contrat a une date de debut et une duree.
     """
 
-    def __init__(self, dateDebut, dateFin, estEnCours):
+    def __init__(self, date_debut, duree_jours):
         """
-        Initialise un nouvel objet Contrat.
+        Initialise un contrat.
 
-        Attributs:
-            dateDebut (date): Date à laquelle le contrat entre en vigueur.
-            dateFin (date): Date prévue pour la fin du contrat.
-            estEnCours (bool): True si le contrat est actuellement actif.
+        Args:
+            date_debut (datetime): Date de debut du contrat
+            duree_jours (int): Duree du contrat en jours
+        """
+        self.date_debut = date_debut
+        self.duree_jours = duree_jours
+        self.date_fin = date_debut + timedelta(days=duree_jours)
+        self.abonnement = None
 
-        Comportement attendu :
-            - Enregistre les dates de début et de fin.
-            - Définit le statut du contrat (actif ou terminé).
+    def estValide(self):
         """
-        pass
+        Verifie si le contrat est encore valide.
 
-    def rompreContract(self):
+        Returns:
+            bool: True si valide, False sinon
         """
-        Met fin au contrat actuel avant sa date de fin prévue.
+        return datetime.now() < self.date_fin
+
+    def jours_restants(self):
         """
-        pass
+        Calcule le nombre de jours restants avant expiration.
+
+        Returns:
+            int: Nombre de jours restants
+        """
+        if not self.estValide():
+            return 0
+        delta = self.date_fin - datetime.now()
+        return delta.days

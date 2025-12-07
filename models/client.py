@@ -1,4 +1,6 @@
 from .voiture import Voiture
+from .abonnement import Abonnement
+
 class Client:
     """
     Représente un client du système DreamPark.
@@ -18,7 +20,7 @@ class Client:
         Attributs:
             nom (str): Nom du client.
             adresse (str): Adresse principale du client.
-            estAbonne (bool, optionnel): Statut d’abonnement (par défaut False).
+            estAbonne (bool, optionnel): Statut d'abonnement (par défaut False).
             estSuperAbonne (bool, optionnel): Statut de pack garanti (par défaut False).
             nbFrequentation (int, optionnel): Nombre initial de fréquentations (par défaut 0).
         """
@@ -27,18 +29,20 @@ class Client:
         self.estAbonne = estAbonne
         self.estSuperAbonne = estSuperAbonne
         self.nbFrequentation = nbFrequentation
-        self.voiture = []
+        self.voiture = None
+        self.mode_paiement = None
+        self.services_demandes = []
 
     def sAbonner(self, ab):
         """
         Permet au client de souscrire à un abonnement spécifique.
 
         Attributs:
-            ab: Type ou objet représentant l’abonnement choisi.
+            ab: Type ou objet représentant l'abonnement choisi.
 
         Comportement attendu :
             - Vérifie si le client est déjà abonné.
-            - Si non, applique les avantages liés à l’abonnement choisi.
+            - Si non, applique les avantages liés à l'abonnement choisi.
             - Met à jour les attributs `estAbonne` et éventuellement `estSuperAbonne`.
         """
         pass
@@ -55,7 +59,7 @@ class Client:
         Comportement attendu :
             - Crée un objet Véhicule avec les informations fournies.
             - Associe le véhicule à ce client.
-            - Vérifie la validité de l’immatriculation.
+            - Vérifie la validité de l'immatriculation.
         """
         voiture = Voiture()
         voiture.definirHauteur(hautV)
@@ -67,10 +71,10 @@ class Client:
 
     def seDesabonner(self):
         """
-        Met fin à l’abonnement actuel du client.
+        Met fin à l'abonnement actuel du client.
 
         Comportement attendu :
-            - Supprime les privilèges d’abonné ou de super abonné.
+            - Supprime les privilèges d'abonné ou de super abonné.
             - Met à jour les attributs `estAbonne` et `estSuperAbonne` à False.
             - Peut déclencher une notification ou un message de confirmation.
         """
@@ -106,25 +110,54 @@ class Client:
 
     def demanderEntretien(self):
         """
-        Permet au client de demander un service d’entretien.
+        Permet au client de demander un service d'entretien.
 
         Comportement attendu :
-            - Crée une demande d’entretien dans le système.
+            - Crée une demande d'entretien dans le système.
             - Associe cette demande au véhicule principal du client.
-            - Retourne un reçu ou une confirmation d’entretien planifié.
+            - Retourne un reçu ou une confirmation d'entretien planifié.
         """
         pass
 
     def entreParking(self, a):
         """
-        Décrit l’action d’entrée du client dans le parking via un accès.
+        Décrit l'action d'entrée du client dans le parking via un accès.
 
         Attributs:
-            a: Objet représentant l’accès ou la porte utilisée pour entrer.
+            a: Objet représentant l'accès ou la porte utilisée pour entrer.
 
         Comportement attendu :
             - Déclenche la capture des informations du véhicule (caméra, taille, plaque).
             - Met à jour le nombre de fréquentations du client (`nbFrequentation`).
-            - Lance le processus d’attribution d’une place via le système de parking.
+            - Lance le processus d'attribution d'une place via le système de parking.
         """
         pass
+
+    def definirModePaiement(self, mode_paiement):
+        """
+        Definit le mode de paiement du client.
+
+        Args:
+            mode_paiement (str): "CB" ou "Especes"
+        """
+        self.mode_paiement = mode_paiement
+
+    def souscrireContrat(self, contrat):
+        """
+        Fait souscrire le client a un contrat d'abonnement.
+
+        Args:
+            contrat (Contrat): Le contrat a associer
+        """
+        self.contrat = contrat
+
+    def ajouterService(self, service):
+        """
+        Ajoute un service demande par le client.
+
+        Args:
+            service (Service): Le service a ajouter
+        """
+        if not hasattr(self, 'services_demandes'):
+            self.services_demandes = []
+        self.services_demandes.append(service)

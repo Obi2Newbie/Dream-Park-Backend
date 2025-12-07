@@ -18,7 +18,8 @@ class Acces:
             - Peut initialiser les composants associés tels que la caméra et le panneau d’affichage.
             - Les détails d’initialisation (ex. numéro d’accès, position, type) seront définis ultérieurement.
         """
-        pass
+        self.teleporteurs = []
+
     def actionnerCamera(self, c):
         """
         Active la caméra associée à cet accès pour identifier un véhicule.
@@ -66,3 +67,15 @@ class Acces:
             - Gère les cas où le parking est complet ou la carte d’abonnement est invalide.
         """
         pass
+
+    def obtenirTeleporteurDisponible(self):
+        """
+        Recherche un teleporteur disponible parmi ceux de l'acces.
+
+        Returns:
+            Teleporteur: Un teleporteur disponible ou None
+        """
+        for teleporteur in self.teleporteurs:
+            if teleporteur.estDisponible():
+                return teleporteur
+        return None
