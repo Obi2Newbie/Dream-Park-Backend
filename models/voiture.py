@@ -1,5 +1,3 @@
-from models import Placement
-
 class Voiture:
     """
     Représente une voiture gérée par le système DreamPark.
@@ -11,7 +9,7 @@ class Voiture:
         estDansParking (bool) : Indique si le véhicule est actuellement stationné dans le parking.
     """
 
-    def __init__(self, hauteur, longueur, immatriculation, estDansParking = False):
+    def __init__(self, hauteur = 0, longueur = 0, immatriculation = "", estDansParking = False):
         """
         Initialise une nouvelle voiture avec ses caractéristiques physiques
         et son statut de stationnement.

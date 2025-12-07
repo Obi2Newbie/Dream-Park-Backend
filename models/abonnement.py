@@ -26,15 +26,4 @@ class Abonnement:
         self.estPackGar = estPackGar
 
     def addContrat(self, contrat):
-        """
-        Associe un contrat à cet abonnement.
-
-        Args:
-            contrat (Contrat): Objet représentant le contrat lié à cet abonnement.
-
-        Comportement attendu :
-            - Lie le contrat fourni à cet abonnement.
-            - Permet de suivre la durée et le statut de l’abonnement.
-            - Peut servir à gérer les renouvellements ou résiliations.
-        """
-        pass
+        return 0;

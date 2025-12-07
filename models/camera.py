@@ -1,5 +1,3 @@
-from models import Voiture
-
 class Camera:
     """
     Représente une caméra du système DreamPark, utilisée pour capturer

@@ -1,3 +1,4 @@
+from .camera import Camera
 class Acces:
     """
     Représente un accès du parking DreamPark, permettant la gestion
@@ -33,7 +34,8 @@ class Acces:
             - Crée ou met à jour un objet `Voiture` lié au client.
             - Peut être utilisé au moment de l’entrée pour attribuer une place de parking.
         """
-        pass
+        camera = Camera()
+        voiture = c.nouvenouvelleVoiture("FS-590-VS", 1.90, 2.00)
 
     def actionnerPanneau(self):
         """

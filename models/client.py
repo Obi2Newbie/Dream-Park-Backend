@@ -1,5 +1,4 @@
-from models import Voiture, Abonnement
-
+from .voiture import Voiture
 class Client:
     """
     Représente un client du système DreamPark.
@@ -28,6 +27,7 @@ class Client:
         self.estAbonne = estAbonne
         self.estSuperAbonne = estSuperAbonne
         self.nbFrequentation = nbFrequentation
+        self.voiture = []
 
     def sAbonner(self, ab):
         """
@@ -57,10 +57,12 @@ class Client:
             - Associe le véhicule à ce client.
             - Vérifie la validité de l’immatriculation.
         """
-        voiture = Voiture
+        voiture = Voiture()
         voiture.definirHauteur(hautV)
         voiture.definirLongueur(longV)
         voiture.definirImmatriculation(imma)
+        self.voiture.append(voiture)
+
 
 
     def seDesabonner(self):
