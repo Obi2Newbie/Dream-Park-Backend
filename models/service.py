@@ -1,21 +1,23 @@
 class Service:
     """
-    Represente un service propose par le parking DreamPark.
-    Les services sont disponibles pour les clients abonnes.
+    Représente un service fourni par le système DreamPark,
+    tel qu'une livraison, un entretien ou une maintenance.
+
+    Attributs :
+        dateDemande (date) : Date à laquelle le client a effectué la demande du service.
+        dateService (date) : Date prévue ou réalisée pour la prestation du service.
+        rapport (str) : Compte rendu ou rapport généré à la suite du service.
     """
 
-    def __init__(self, nom, prix, description=""):
+    def __init__(self, dateDemande, dateService, rapport):
         """
-        Initialise un service.
+        Initialise un objet Service.
 
-        Args:
-            nom (str): Nom du service
-            prix (float): Prix du service
-            description (str): Description optionnelle
+        Comportement attendu :
+            - Crée une nouvelle instance de service avec des attributs par défaut.
+            - Prépare l'objet pour l'enregistrement ou l'utilisation dans le système.
+            - Les dates et le rapport seront définis ou mis à jour ultérieurement.
         """
-        self.nom = nom
-        self.prix = prix
-        self.description = description
-
-    def __repr__(self):
-        return f"Service({self.nom}, {self.prix} euros)"
+        self.dateDemande = dateDemande
+        self.dateService = dateService
+        self.rapport = rapport
