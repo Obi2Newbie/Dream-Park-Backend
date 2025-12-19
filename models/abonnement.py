@@ -26,6 +26,7 @@ class Abonnement:
         self.libelle = libelle
         self.prix = prix
         self.estPackGar = estPackGar
+        self.mesContrat = []
 
     def addContrat(self, contrat):
         """
@@ -39,4 +40,4 @@ class Abonnement:
             - Permet de suivre la durée et le statut de l’abonnement.
             - Peut servir à gérer les renouvellements ou résiliations.
         """
-        pass
+        self.mesContrat.append(contrat)

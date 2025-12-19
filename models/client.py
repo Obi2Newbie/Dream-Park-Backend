@@ -1,4 +1,7 @@
-import pydoc
+from models import Voiture, Maintenance, Livraison, Entretien
+from datetime import date
+
+
 class Client:
     """
     Représente un client du système DreamPark.
@@ -22,7 +25,14 @@ class Client:
             estSuperAbonne (bool, optionnel): Statut de pack garanti (par défaut False).
             nbFrequentation (int, optionnel): Nombre initial de fréquentations (par défaut 0).
         """
-        pass
+        self.nom = nom
+        self.adresse = adresse
+        self.estAbonne = estAbonne
+        self.estSuperAbonne = estSuperAbonne
+        self.nbFrequentation = nbFrequentation or 0
+        self.mesServices = []
+        self.maVoiture = None
+        self.monAbonnement = None
 
     def sAbonner(self, ab):
         """
@@ -36,7 +46,19 @@ class Client:
             - Si non, applique les avantages liés à l’abonnement choisi.
             - Met à jour les attributs `estAbonne` et éventuellement `estSuperAbonne`.
         """
-        pass
+        if self.estAbonne:
+            return "Client deja abonné"
+        else:
+            match ab.libelle:
+                case 'abonne':
+                    self.estAbonne = True
+                case 'super_abonne':
+                    self.estSuperAbonne = True
+                    self.estAbonne = True
+                case _:
+                    print("Erreur lor de l'enregistrement de l'abonnement")
+        return "Abonnement fait"
+
 
     def nouvelleVoiture(self, imma, hautV, longV):
         """
@@ -52,7 +74,7 @@ class Client:
             - Associe le véhicule à ce client.
             - Vérifie la validité de l’immatriculation.
         """
-        pass
+        self.maVoiture =  Voiture(hautV, longV, imma, False)
 
     def seDesabonner(self):
         """
@@ -63,7 +85,8 @@ class Client:
             - Met à jour les attributs `estAbonne` et `estSuperAbonne` à False.
             - Peut déclencher une notification ou un message de confirmation.
         """
-        pass
+        self.estAbonne = False
+        self.estSuperAbonne = False
 
     def demanderMaintenance(self):
         """
@@ -74,7 +97,11 @@ class Client:
             - Crée une demande de maintenance associée à ce véhicule.
             - Retourne un identifiant ou un objet de suivi de maintenance.
         """
-        pass
+        if self.estAbonne:
+            service = Maintenance(date.today())
+            self.mesServices.append(service)
+        else:
+            print("Seule les abonnés peuvent rajouté ce service")
 
     def demanderLivraison(self, dateLiv, heure, adresseLiv):
         """
@@ -91,7 +118,7 @@ class Client:
             - Planifie la livraison dans le système.
             - Retourne un objet de confirmation ou une référence de livraison.
         """
-        pass
+        service = Livraison(dateLiv, heure, adresseLiv)
 
     def demanderEntretien(self):
         """
@@ -102,7 +129,11 @@ class Client:
             - Associe cette demande au véhicule principal du client.
             - Retourne un reçu ou une confirmation d’entretien planifié.
         """
-        pass
+        if self.estAbonne:
+            service = Entretien(date.today())
+            self.mesServices.append(service)
+        else:
+            print("Seule les abonnés peuvent rajouté ce service")
 
     def entreParking(self, a):
         """

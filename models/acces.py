@@ -1,3 +1,4 @@
+from . import Voiture
 from .camera import Camera
 class Acces:
     """
@@ -18,7 +19,11 @@ class Acces:
             - Peut initialiser les composants associés tels que la caméra et le panneau d’affichage.
             - Les détails d’initialisation (ex. numéro d’accès, position, type) seront définis ultérieurement.
         """
-        self.teleporteurs = []
+        self.MonParking = None
+        self.TelEntree = ""
+        self.TelSortie = ""
+        self.maBorne = None
+        self.monPanneau = None
 
     def actionnerCamera(self, c):
         """
@@ -36,7 +41,15 @@ class Acces:
             - Peut être utilisé au moment de l’entrée pour attribuer une place de parking.
         """
         camera = Camera()
-        voiture = c.nouvenouvelleVoiture("FS-590-VS", 1.90, 2.00)
+        v = Voiture()
+        vHauteur = camera.capturerHauteur(c.maVoiture)
+        vLongueur = camera.capturerLongueur(c.maVoiture)
+        vImma = camera.capturerImma(c.maVoiture)
+        v.definirHauteur(vHauteur)
+        v.definirLongueur(vLongueur)
+        v.definirImma(vImma)
+
+        return v
 
     def actionnerPanneau(self):
         """
@@ -49,7 +62,7 @@ class Acces:
             - Affiche des informations dynamiques (places libres, niveau complet, etc.).
             - Sert d’interface visuelle pour les clients à l’entrée et à la sortie.
         """
-        pass
+        self.monPanneau.afficherNbPlacesDisponibles()
 
     def lancerProcedureEntree(self, c):
         """

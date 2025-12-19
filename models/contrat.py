@@ -1,3 +1,6 @@
+from sqlalchemy import null
+
+
 class Contrat:
     """
     Représente un contrat liant un client au système DreamPark,
@@ -22,10 +25,14 @@ class Contrat:
             - Enregistre les dates de début et de fin.
             - Définit le statut du contrat (actif ou terminé).
         """
-        pass
+        self.dateDebut = dateDebut
+        self.dateFin = dateFin
+        self.estEnCours = estEnCours
 
     def rompreContract(self):
         """
         Met fin au contrat actuel avant sa date de fin prévue.
         """
-        pass
+        self.dateFin = None
+        self.estEnCours = False
+        self.dateDebut = None

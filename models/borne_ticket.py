@@ -8,17 +8,6 @@ class Borne_ticket:
         - Gestion des informations de paiement et de carte.
     """
 
-    def __init__(self):
-        """
-        Initialise un objet `Borne_ticket`.
-
-        Comportement attendu :
-            - Prépare la borne à fonctionner pour la délivrance de tickets et la gestion client.
-            - Peut initialiser les composants matériels ou logiciels nécessaires (lecteur de carte, écran, etc.).
-            - Les détails d’initialisation seront définis ultérieurement selon le type de borne.
-        """
-        pass
-
     def deliverTicket(self, c):
         """
         Délivre un ticket au client spécifié.

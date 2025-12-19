@@ -8,6 +8,12 @@ class Parking:
         __prix (float) : Tarif de stationnement appliqué aux utilisateurs non abonnés.
         nbNiveau (int) : Nombre total de niveaux ou d’étages dans le parking.
     """
+    __instance = None
+
+    def __new__(cls):
+        if cls.__instance is None:
+            cls.__instance = super(Parking, cls).__new__(cls)
+        return cls.__instance
 
     def __init__(self, nbPlacesParNiveau, nbPlacesLibres, prix, nBNiveau):
         """
