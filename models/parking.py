@@ -5,24 +5,30 @@ class Parking:
     Attributs :
         __nbPlacesParNiveau (int) : Nombre total de places disponibles à chaque niveau du parking.
         __nbPlacesLibres (int) : Nombre de places actuellement libres dans le parking.
-        __prix (int) : Tarif de stationnement appliqué aux utilisateurs non abonnés.
+        __prix (float) : Tarif de stationnement appliqué aux utilisateurs non abonnés.
         nbNiveau (int) : Nombre total de niveaux ou d’étages dans le parking.
     """
 
-    def __init__(self, nbPlacesParNiveau: int, nbPlacesLibres: int):
+    def __init__(self, nbPlacesParNiveau, nbPlacesLibres, prix, nBNiveau):
         """
         Initialise un objet Parking avec ses capacités principales.
 
         Args:
-            nbPlacesParNiveau (int): Nombre de places disponibles par niveau.
-            nbPlacesLibres (int): Nombre de places libres au moment de l’initialisation.
+            nbPlacesParNiveau (int) : Nombre de places disponibles par niveau.
+            nbPlacesLibres (int) : Nombre de places libres au moment de l’initialisation.
+            __prix (float) : Tarif de stationnement appliqué aux utilisateurs non abonnés.
+            nbNiveau (int) : Nombre total de niveaux ou d’étages dans le parking.
 
-        Comportement attendu :
+        Comportement attendu:
             - Définit la capacité du parking.
             - Initialise le nombre de places libres.
             - Prépare l’objet à la gestion des véhicules et des abonnements.
         """
-        pass
+        self.__nbPlacesParNiveau = nbPlacesParNiveau
+        self.__nbPlacesLibres = nbPlacesLibres
+        self.__prix = prix
+        self.places = []
+        self.__nBNiveau = nBNiveau
 
     def rechercherPlace(self, v):
         """
@@ -56,8 +62,11 @@ class Parking:
             - Compte uniquement celles marquées comme libres.
             - Peut être utilisé pour afficher des informations sur les panneaux d’entrée.
         """
-        pass
-
+        placeLibre = 0
+        for p in self.places:
+            if p.obtenir_niveau() == niveau and p.obtenir_estLibre():
+                placeLibre += 1
+        return placeLibre
     def addAbonnement(self, ab):
         """
         Ajoute un abonnement au système de gestion du parking.

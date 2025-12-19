@@ -17,9 +17,9 @@ class Voiture:
         et son statut de stationnement.
 
         Attributs:
-            hauteur (float): Hauteur du véhicule en mètres.
-            longueur (float): Longueur du véhicule en mètres.
-            immatriculation (str): Numéro d'immatriculation du véhicule.
+            __hauteur (float): Hauteur du véhicule en mètres.
+            __longueur (float): Longueur du véhicule en mètres.
+            __immatriculation (str): Numéro d'immatriculation du véhicule.
             estDansParking (bool, optionnel): True si le véhicule est déjà stationné
                 dans le parking (par défaut False).
         """

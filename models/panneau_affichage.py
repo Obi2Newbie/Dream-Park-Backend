@@ -5,18 +5,6 @@ class Panneau_affichage:
     Ce panneau sert à informer les clients sur l’état du parking,
     notamment le nombre de places disponibles ou les messages d’accès.
     """
-
-    def __init__(self):
-        """
-        Initialise un objet `Panneau_affichage`.
-
-        Comportement attendu :
-            - Prépare le panneau à afficher des informations dynamiques.
-            - Peut être associé à un ou plusieurs accès du parking.
-            - Les paramètres d’initialisation (ex. emplacement, type d’écran) seront définis ultérieurement.
-        """
-        pass
-
     def afficherNbPlacesDisponibles(self, p):
         """
         Affiche sur le panneau le nombre de places actuellement disponibles
@@ -33,4 +21,4 @@ class Panneau_affichage:
             - Met à jour l’affichage visuel pour informer les clients.
             - Peut afficher des messages spéciaux si le parking est complet ou réservé.
         """
-        pass
+        return p.NbPlacesDisponibles()
