@@ -21,9 +21,10 @@ class Acces:
         """
         self.MonParking = None
         self.TelEntree = ""
-        self.TelSortie = ""
+        self.__TelSortie = ""
         self.maBorne = None
         self.monPanneau = None
+        self.maCamera
 
     def actionnerCamera(self, c):
         """
@@ -44,10 +45,10 @@ class Acces:
         v = Voiture()
         vHauteur = camera.capturerHauteur(c.maVoiture)
         vLongueur = camera.capturerLongueur(c.maVoiture)
-        vImma = camera.capturerImma(c.maVoiture)
+        vImma = camera.capturerImmatr(c.maVoiture)
         v.definirHauteur(vHauteur)
         v.definirLongueur(vLongueur)
-        v.definirImma(vImma)
+        v.definirImmatriculation(vImma)
 
         return v
 

@@ -27,6 +27,7 @@ class Voiture:
         self.__longueur = longueur
         self.__immatriculation = immatriculation
         self.estDansParking = estDansParking
+        self.proprietaire = None
 
     def addPlacementV(self, p):
         """

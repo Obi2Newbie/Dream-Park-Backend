@@ -18,7 +18,7 @@ class Voiturier:
             - Enregistre l’identifiant du voiturier.
             - Prépare l’objet pour être associé à une opération de livraison ou de récupération.
         """
-        pass
+        self.numVoiturier = numVoiturier
 
     def livrerVoiture(self, v, date, heure):
         """

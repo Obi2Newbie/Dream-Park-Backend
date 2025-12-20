@@ -33,8 +33,11 @@ class Parking:
         self.__nbPlacesParNiveau = nbPlacesParNiveau
         self.__nbPlacesLibres = nbPlacesLibres
         self.__prix = prix
-        self.places = []
-        self.__nBNiveau = nBNiveau
+        self.mesPlaces = []
+        self.mesAbonnements = []
+        self.nBNiveau = nBNiveau
+        self.acces1 = None
+        self.acces2 = None
 
     def rechercherPlace(self, v):
         """
