@@ -1,7 +1,6 @@
 from datetime import date
 from .service import Service
 
-
 class Livraison(Service):
     """
     Représente une opération de livraison de véhicule dans le système DreamPark.
@@ -10,6 +9,11 @@ class Livraison(Service):
     qu’il s’agisse d’un service classique ou d’un avantage réservé
     aux abonnés premium.
     """
+    def __init__(self, dateDemande, adresse, heure):
+        super.__init__(dateDemande)
+        self.adresse = adresse
+        self.heure = heure
+
     def effectuerLivraison(self):
         """
         Effectue la livraison d’un véhicule au client.
@@ -20,5 +24,5 @@ class Livraison(Service):
             - Peut générer un rapport ou une confirmation de livraison.
             - Interagit éventuellement avec un voiturier ou un service associé.
         """
-        self.dateService = date()
-        self.rapport = f"Livraison effectué le {self.dateService}"
+        self.rapport = f"Livraison effectuée à {self.adresse} à {self.heure}h"
+        return self.rapport

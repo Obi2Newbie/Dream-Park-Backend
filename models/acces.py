@@ -1,5 +1,6 @@
 from . import Voiture
 from .camera import Camera
+
 class Acces:
     """
     Représente un accès du parking DreamPark, permettant la gestion
@@ -10,7 +11,7 @@ class Acces:
         - L’affichage des informations sur les panneaux.
         - Le déclenchement des procédures d’entrée pour les clients.
     """
-    def __init__(self):
+    def __init__(self, camera, borne, panneau, tel_entree, tel_sortie):
         """
         Initialise un objet `acces`.
 
@@ -20,11 +21,11 @@ class Acces:
             - Les détails d’initialisation (ex. numéro d’accès, position, type) seront définis ultérieurement.
         """
         self.MonParking = None
-        self.TelEntree = ""
-        self.__TelSortie = ""
-        self.maBorne = None
-        self.monPanneau = None
-        self.maCamera
+        self.TelEntree = tel_entree
+        self.__TelSortie = tel_sortie
+        self.maBorne = borne
+        self.monPanneau = panneau
+        self.maCamera = camera
 
     def actionnerCamera(self, c):
         """
@@ -41,16 +42,13 @@ class Acces:
             - Crée ou met à jour un objet `Voiture` lié au client.
             - Peut être utilisé au moment de l’entrée pour attribuer une place de parking.
         """
-        camera = Camera()
-        v = Voiture()
-        vHauteur = camera.capturerHauteur(c.maVoiture)
-        vLongueur = camera.capturerLongueur(c.maVoiture)
-        vImma = camera.capturerImmatr(c.maVoiture)
-        v.definirHauteur(vHauteur)
-        v.definirLongueur(vLongueur)
-        v.definirImmatriculation(vImma)
-
-        return v
+        if c.maVoiture:
+            vHauteur = self.maCamera.capturerHauteur(c.maVoiture)
+            vLongueur = self.maCamera.capturerLongueur(c.maVoiture)
+            vImma = self.maCamera.capturerImmatr(c.maVoiture)
+            voiture = Voiture(vHauteur, vLongueur, vImma)
+            return voiture
+        return None
 
     def actionnerPanneau(self):
         """
@@ -63,21 +61,42 @@ class Acces:
             - Affiche des informations dynamiques (places libres, niveau complet, etc.).
             - Sert d’interface visuelle pour les clients à l’entrée et à la sortie.
         """
-        self.monPanneau.afficherNbPlacesDisponibles()
+        if self.MonParking and self.monPanneau:
+            return self.monPanneau.afficherNbPlacesDisponibles()
 
     def lancerProcedureEntree(self, c):
         """
         Lance la procédure d’entrée complète pour un client.
+        Gère désormais la priorité pour les Super Abonnés (Pack Garanti).
 
         Args:
-            c (Client): Objet représentant le client souhaitant entrer dans le parking.
+            c (Client): Objet représentant le client souhaitant entrer.
 
         Returns:
-            string: Message indiquant le résultat de la procédure (succès, échec, erreur).
-
-        Comportement attendu :
-            - Coordonne les actions de la caméra et du panneau.
-            - Attribue une place de parking si disponible.
-            - Gère les cas où le parking est complet ou la carte d’abonnement est invalide.
+            string: Message indiquant le résultat de la procédure.
         """
-        pass
+        # 1. Identification du véhicule via la caméra
+        # Note : actionnerCamera crée ou met à jour l'objet Voiture
+        voiture = self.actionnerCamera(c)
+
+        # 2. Recherche d'une place physique dans le parking
+        placeAssignee = self.MonParking.rechercherPlace(voiture)
+
+        if placeAssignee:
+            # CAS 1 : Il y a de la place
+            if not c.estAbonne:
+                self.maBorne.deliverTicket(c)
+
+            # Téléportation standard
+            self.TelEntree.teleporterVoiture(voiture, placeAssignee)
+            return f"Bienvenue {c.nom}. Place assignée : {placeAssignee.numero}"
+
+        else:
+            # CAS 2 : Le parking est physiquement complet
+            if c.estSuperAbonne:
+                # Gestion spécifique pour le Pack Garanti (Stationnement assuré)
+                message = self.TelEntree.teleporterVoitureSuperAbonne(voiture)
+                return f"Bienvenue {c.nom}. {message}"
+            else:
+                # Refus d'entrée pour les clients normaux ou abonnés simples
+                return "Désolé, le parking est complet."

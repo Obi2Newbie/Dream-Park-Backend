@@ -10,7 +10,7 @@ class Place:
         __hauteur (float) : Hauteur maximale autorisée pour les véhicules.
     """
 
-    def __init__(self, numero, niveau, longueur, estLibre, hauteur):
+    def __init__(self, numero, niveau, longueur, hauteur):
         """
         Initialise une place de parking avec ses caractéristiques principales.
 
@@ -28,8 +28,9 @@ class Place:
         self.numero = numero
         self.__niveau = niveau
         self.__longueur = longueur
-        self.__estLibre = estLibre
+        self.__estLibre = True
         self.__hauteur = hauteur
+        self.monPlacement = None
 
     def addPlacementP(self, p):
         """
@@ -44,7 +45,8 @@ class Place:
             - Peut mettre à jour l’état `__estLibre` selon le statut du placement.
             - Sert à tracer quel véhicule occupe actuellement cette place.
         """
-        pass
+        self.monPlacement = p
+        self.estLibre = False
 
     def obtenir_niveau(self):
         """

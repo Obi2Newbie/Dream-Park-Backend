@@ -1,3 +1,5 @@
+from datetime import date
+
 class Placement:
     """
     Représente le placement d'un véhicule dans une place de parking DreamPark.
@@ -8,7 +10,7 @@ class Placement:
         estEnCours (bool) : Indique si le placement est actuellement actif.
     """
 
-    def __init__(self, dateDebut, dateFin, estEnCours):
+    def __init__(self, dateDebut, dateFin=None, estEnCours=True):
         """
         Initialise un nouveau placement pour un véhicule dans le parking.
 
@@ -26,4 +28,5 @@ class Placement:
         Termine le placement actuel lorsque le véhicule quitte le parking.
 
         """
-        pass
+        self.estEnCours =False
+        self.dateFin = date.today()

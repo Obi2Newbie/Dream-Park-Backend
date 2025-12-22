@@ -21,4 +21,4 @@ class Panneau_affichage:
             - Met à jour l’affichage visuel pour informer les clients.
             - Peut afficher des messages spéciaux si le parking est complet ou réservé.
         """
-        return p.NbPlacesDisponibles()
+        return f"Places libres: {p.NbPlacesDisponibles()}"

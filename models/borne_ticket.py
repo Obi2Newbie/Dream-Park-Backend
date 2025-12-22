@@ -23,7 +23,7 @@ class Borne_ticket:
             - Enregistre les informations nécessaires (heure d’entrée, identifiant du ticket, etc.).
             - Peut imprimer le ticket physiquement ou l’envoyer sous format numérique.
         """
-        pass
+        return f"{c.nom}-{c.maVoiture}"
 
     def proposerServices(self):
         """
@@ -37,7 +37,7 @@ class Borne_ticket:
             - Permet au client de sélectionner une option parmi les propositions.
             - Peut afficher les coûts ou les avantages associés.
         """
-        pass
+        return "Services: Maintenance, Entretien, Livraison"
 
     def proposerAbonnements(self, c, p):
         """
@@ -55,7 +55,7 @@ class Borne_ticket:
             - Permet la souscription immédiate si le client accepte une offre.
             - Peut inclure des offres spéciales ou des réductions pour les utilisateurs fréquents.
         """
-        pass
+        return "Abonnements disponibles: Standard, Pack Garantie"
 
     def recupererInfosCarte(self, c, p):
         """
@@ -73,7 +73,9 @@ class Borne_ticket:
             - Vérifie la validité de la carte (date d’expiration, abonnement actif, etc.).
             - Met à jour les informations du client dans le système.
         """
-        pass
+        if c.estAbonne:
+            return f"Carte validée pour {c.nom}"
+        return "Aucun carte détectée"
 
     def proposerTypePaiement(self):
         """
@@ -87,4 +89,4 @@ class Borne_ticket:
             - Permet au client de choisir son mode de paiement préféré.
             - Peut vérifier la disponibilité des terminaux avant validation.
         """
-        pass
+        return "Modes de paiements: CB, Espèces"

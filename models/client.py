@@ -1,4 +1,8 @@
-from models import Voiture, Maintenance, Livraison, Entretien
+from .voiture import Voiture
+from .contrat import Contrat
+from .maintenance import Maintenance
+from .livraison import Livraison
+from .entretien import Entretien
 from datetime import date
 
 
@@ -14,7 +18,7 @@ class Client:
         nbFrequentation (int) : Nombre de visites ou de passages enregistrés dans le parking.
     """
 
-    def __init__(self, nom, adresse, estAbonne, estSuperAbonne, nbFrequentation):
+    def __init__(self, nom, adresse, estAbonne=False, estSuperAbonne=False, nbFrequentation=0):
         """
         Initialise un nouveau client avec ses informations de base.
 
@@ -29,10 +33,11 @@ class Client:
         self.adresse = adresse
         self.estAbonne = estAbonne
         self.estSuperAbonne = estSuperAbonne
-        self.nbFrequentation = nbFrequentation or 0
+        self.nbFrequentation = nbFrequentation
         self.mesServices = []
         self.maVoiture = None
         self.monAbonnement = None
+        self.monContrat = None
 
     def sAbonner(self, ab):
         """
@@ -46,18 +51,17 @@ class Client:
             - Si non, applique les avantages liés à l’abonnement choisi.
             - Met à jour les attributs `estAbonne` et éventuellement `estSuperAbonne`.
         """
-        if self.estAbonne:
-            return "Client deja abonné"
-        else:
-            match ab.libelle:
-                case 'abonne':
-                    self.estAbonne = True
-                case 'super_abonne':
-                    self.estSuperAbonne = True
-                    self.estAbonne = True
-                case _:
-                    print("Erreur lor de l'enregistrement de l'abonnement")
-        return "Abonnement fait"
+        nouvContrat = Contrat(date.today(), None, True)
+        nouvContrat.monAbonnement = ab
+        ab.addContrat(nouvContrat)
+
+        self.monContrat = nouvContrat
+        self.monAbonnement = ab
+        self.estAbonne = True
+
+        if ab.estPackGar:
+            self.estSuperAbonne = True
+        return "Abonnement validé, merci de nous faire confiance!"
 
 
     def nouvelleVoiture(self, imma, hautV, longV):
@@ -74,7 +78,7 @@ class Client:
             - Associe le véhicule à ce client.
             - Vérifie la validité de l’immatriculation.
         """
-        self.maVoiture =  Voiture(hautV, longV, imma, False)
+        self.maVoiture =  Voiture(hautV, longV, imma, self)
 
     def seDesabonner(self):
         """
@@ -85,8 +89,11 @@ class Client:
             - Met à jour les attributs `estAbonne` et `estSuperAbonne` à False.
             - Peut déclencher une notification ou un message de confirmation.
         """
+        if self.monContrat:
+            self.monContrat.rompreContract()
         self.estAbonne = False
         self.estSuperAbonne = False
+        self.monAbonnement = None
 
     def demanderMaintenance(self):
         """
@@ -100,8 +107,8 @@ class Client:
         if self.estAbonne:
             service = Maintenance(date.today())
             self.mesServices.append(service)
-        else:
-            print("Seule les abonnés peuvent rajouté ce service")
+            return service
+        return "Service réservé aux abonnés"
 
     def demanderLivraison(self, dateLiv, heure, adresseLiv):
         """
@@ -118,7 +125,9 @@ class Client:
             - Planifie la livraison dans le système.
             - Retourne un objet de confirmation ou une référence de livraison.
         """
-        service = Livraison(dateLiv, heure, adresseLiv)
+        livraison = Livraison(dateLiv, heure, adresseLiv)
+        self.mesServices.append(livraison)
+        return livraison
 
     def demanderEntretien(self):
         """
@@ -132,8 +141,7 @@ class Client:
         if self.estAbonne:
             service = Entretien(date.today())
             self.mesServices.append(service)
-        else:
-            print("Seule les abonnés peuvent rajouté ce service")
+        return "Seule les abonnés peuvent rajouté ce service"
 
     def entreParking(self, a):
         """
@@ -147,4 +155,5 @@ class Client:
             - Met à jour le nombre de fréquentations du client (`nbFrequentation`).
             - Lance le processus d’attribution d’une place via le système de parking.
         """
-        pass
+        a.lancerProcedureEntree(self)
+        self.nbFrequentation += 1

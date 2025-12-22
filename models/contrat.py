@@ -1,6 +1,4 @@
-from sqlalchemy import null
-
-
+from datetime import date
 class Contrat:
     """
     Représente un contrat liant un client au système DreamPark,
@@ -28,11 +26,11 @@ class Contrat:
         self.dateDebut = dateDebut
         self.dateFin = dateFin
         self.estEnCours = estEnCours
+        self.monAbonnement = None
 
     def rompreContract(self):
         """
         Met fin au contrat actuel avant sa date de fin prévue.
         """
-        self.dateFin = None
         self.estEnCours = False
-        self.dateDebut = None
+        self.dateDebut = date.today()

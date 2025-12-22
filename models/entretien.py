@@ -8,6 +8,8 @@ class Entretien(Service):
     Cette classe correspond à un service effectué sur un véhicule,
     tel qu’un nettoyage, une révision ou une vérification technique.
     """
+    def __init__(self, dateDemande):
+        super().__init__(dateDemande)
 
     def effectuerEntretien(self):
         """
@@ -19,5 +21,5 @@ class Entretien(Service):
             - Peut générer un rapport détaillant les opérations effectuées.
             - Interagit éventuellement avec d’autres services du système DreamPark.
         """
-        self.dateService = date()
-        self.rapport = f"L'entretien demandé par le client est fait le {self.dateService}"
+        self.rapport = f"L'entretien demandé par le client est fait."
+        return self.rapport

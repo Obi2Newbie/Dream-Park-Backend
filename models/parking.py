@@ -1,3 +1,4 @@
+from .place import Place
 class Parking:
     """
     Représente le parking principal du système DreamPark.
@@ -10,7 +11,7 @@ class Parking:
     """
     __instance = None
 
-    def __new__(cls):
+    def __new__(cls, *args, **kwargs):
         if cls.__instance is None:
             cls.__instance = super(Parking, cls).__new__(cls)
         return cls.__instance
@@ -30,14 +31,16 @@ class Parking:
             - Initialise le nombre de places libres.
             - Prépare l’objet à la gestion des véhicules et des abonnements.
         """
-        self.__nbPlacesParNiveau = nbPlacesParNiveau
-        self.__nbPlacesLibres = nbPlacesLibres
-        self.__prix = prix
-        self.mesPlaces = []
-        self.mesAbonnements = []
-        self.nBNiveau = nBNiveau
-        self.acces1 = None
-        self.acces2 = None
+        if not hasattr(self, 'initialized'):
+            self.__nbPlacesParNiveau = nbPlacesParNiveau
+            self.__nbPlacesLibres = nbPlacesLibres
+            self.__prix = prix
+            self.mesPlaces = []
+            self.mesAbonnements = []
+            self.nBNiveau = nBNiveau
+            self.acces1 = None
+            self.acces2 = None
+            self.initialized = True
 
     def rechercherPlace(self, v):
         """
@@ -54,9 +57,12 @@ class Parking:
             - Prend en compte la hauteur et la longueur maximales autorisées.
             - Met à jour l’état des places disponibles.
         """
-        pass
+        for place in self.mesPlaces:
+            if(place.obtenir_estLibre() and place.obtenir_hauteur() >= v.obtenir_hauteur() and place.obtenir_longueur() >= v.obtenir_longueur()):
+                return place
+        return None
 
-    def nbPlacesLibresParNiveau(self, niveau: str):
+    def nbPlacesLibresParNiveau(self, niveau):
         """
         Calcule et retourne le nombre de places libres pour un niveau spécifique.
 
@@ -72,7 +78,7 @@ class Parking:
             - Peut être utilisé pour afficher des informations sur les panneaux d’entrée.
         """
         placeLibre = 0
-        for p in self.places:
+        for p in self.mesPlaces:
             if p.obtenir_niveau() == niveau and p.obtenir_estLibre():
                 placeLibre += 1
         return placeLibre
@@ -88,4 +94,4 @@ class Parking:
             - Peut ajuster les statistiques liées aux abonnés.
             - Sert à gérer les droits ou tarifs spécifiques des clients abonnés.
         """
-        pass
+        self.mesAbonnements.append(ab)

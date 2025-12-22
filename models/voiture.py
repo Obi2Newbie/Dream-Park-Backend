@@ -11,7 +11,7 @@ class Voiture:
         estDansParking (bool) : Indique si le véhicule est actuellement stationné dans le parking.
     """
 
-    def __init__(self, hauteur = 0, longueur = 0, immatriculation = "", estDansParking = False):
+    def __init__(self, hauteur, longueur, immatriculation, estDansParking = False):
         """
         Initialise une nouvelle voiture avec ses caractéristiques physiques
         et son statut de stationnement.
@@ -28,6 +28,7 @@ class Voiture:
         self.__immatriculation = immatriculation
         self.estDansParking = estDansParking
         self.proprietaire = None
+        self.monPlacement = None
 
     def addPlacementV(self, p):
         """
@@ -42,7 +43,8 @@ class Voiture:
             - Met à jour l’attribut `estDansParking` à True.
             - Peut notifier le système central du changement d’état du véhicule.
         """
-        pass
+        self.monPlacement = p
+        self.estDansParking = True
 
     def obtenirHauteur(self):
         """

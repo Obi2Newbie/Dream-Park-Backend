@@ -1,5 +1,3 @@
-from .placement import Placement
-
 class Abonnement:
     """
     Représente un type d’abonnement proposé par le système DreamPark.
@@ -26,7 +24,7 @@ class Abonnement:
         self.libelle = libelle
         self.prix = prix
         self.estPackGar = estPackGar
-        self.mesContrat = []
+        self.mesAbonnements = []
 
     def addContrat(self, contrat):
         """
@@ -40,4 +38,5 @@ class Abonnement:
             - Permet de suivre la durée et le statut de l’abonnement.
             - Peut servir à gérer les renouvellements ou résiliations.
         """
-        self.mesContrat.append(contrat)
+        if contrat not in self.mesAbonnements:
+            self.mesAbonnements.append(contrat)

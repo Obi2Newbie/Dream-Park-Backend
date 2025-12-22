@@ -1,3 +1,6 @@
+from datetime import date
+from .placement import Placement
+from .parking import Parking
 class Teleporteur:
     """
     Représente le téléporteur du système DreamPark.
@@ -33,7 +36,10 @@ class Teleporteur:
             - Met à jour le statut du véhicule et de la place.
             - Génère un objet `Placement` reflétant la nouvelle position du véhicule.
         """
-        pass
+        nouveau_placement = Placement(date.today(), None, True)
+        p.addPlacementP(nouveau_placement)
+        v.addPlacementV(nouveau_placement)
+        return nouveau_placement
 
     def teleporterVoitureSuperAbonne(self, v):
         """
@@ -50,4 +56,12 @@ class Teleporteur:
             - Téléporte directement le véhicule sans intervention manuelle.
             - Confirme la réussite de l’opération via un message ou un rapport système.
         """
-        pass
+        parking_instance = Parking()
+        place = parking_instance.rechercherPlace(v)
+
+        if place:
+            self.teleporterVoiture(v, place)
+            return "Voiture garée dans le parking (Place standard)."
+        else:
+            v.estDansParking = True
+            return "Parking complet : Voiture prise en charge par le service Valet (Pack Garanti)."
