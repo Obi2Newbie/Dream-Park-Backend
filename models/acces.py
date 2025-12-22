@@ -1,5 +1,4 @@
-from . import Voiture
-from .camera import Camera
+from .voiture import Voiture
 
 class Acces:
     """
@@ -11,7 +10,7 @@ class Acces:
         - L’affichage des informations sur les panneaux.
         - Le déclenchement des procédures d’entrée pour les clients.
     """
-    def __init__(self, camera, borne, panneau, tel_entree, tel_sortie):
+    def __init__(self, camera, borne, panneau, tel_entree, tel_sortie, parking):
         """
         Initialise un objet `acces`.
 
@@ -20,7 +19,7 @@ class Acces:
             - Peut initialiser les composants associés tels que la caméra et le panneau d’affichage.
             - Les détails d’initialisation (ex. numéro d’accès, position, type) seront définis ultérieurement.
         """
-        self.MonParking = None
+        self.MonParking = parking
         self.TelEntree = tel_entree
         self.__TelSortie = tel_sortie
         self.maBorne = borne

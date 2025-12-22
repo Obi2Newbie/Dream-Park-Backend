@@ -96,3 +96,8 @@ class Place:
             float: La hauteur de la place en mètres.
         """
         return self.__hauteur
+
+    def __str__(self):
+        if self.__estLibre:
+            return f"Place {self.__niveau}{self.numero} de longueur {self.__longueur} et hauteur {self.__hauteur} est libre."
+        return f"Place {self.__niveau}{self.numero} de longueur {self.__longueur} et hauteur {self.__hauteur} est occupé."

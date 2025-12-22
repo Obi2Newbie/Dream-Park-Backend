@@ -58,7 +58,7 @@ class Parking:
             - Met à jour l’état des places disponibles.
         """
         for place in self.mesPlaces:
-            if(place.obtenir_estLibre() and place.obtenir_hauteur() >= v.obtenir_hauteur() and place.obtenir_longueur() >= v.obtenir_longueur()):
+            if(place.obtenir_estLibre() and place.obtenir_hauteur() >= v.obtenirHauteur() and place.obtenir_longueur() >= v.obtenirLongueur()):
                 return place
         return None
 
