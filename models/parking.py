@@ -58,7 +58,7 @@ class Parking:
             - Met à jour l’état des places disponibles.
         """
         for place in self.mesPlaces:
-            if(place.obtenir_estLibre() and place.obtenir_hauteur() >= v.obtenirHauteur() and place.obtenir_longueur() >= v.obtenirLongueur()):
+            if place.obtenir_estLibre() and place.obtenir_hauteur() >= v.obtenirHauteur() and place.obtenir_longueur() >= v.obtenirLongueur():
                 return place
         return None
 
@@ -81,6 +81,7 @@ class Parking:
         for p in self.mesPlaces:
             if p.obtenir_niveau() == niveau and p.obtenir_estLibre():
                 placeLibre += 1
+        self.__nbPlacesLibres = placeLibre
         return placeLibre
     def addAbonnement(self, ab):
         """

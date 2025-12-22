@@ -27,9 +27,9 @@ class Place:
         """
         self.numero = numero
         self.__niveau = niveau
-        self.__longueur = longueur
+        self.__longueur = float(longueur)
         self.__estLibre = True
-        self.__hauteur = hauteur
+        self.__hauteur = float(hauteur)
         self.monPlacement = None
 
     def addPlacementP(self, p):
@@ -99,5 +99,5 @@ class Place:
 
     def __str__(self):
         if self.__estLibre:
-            return f"Place {self.__niveau}{self.numero} de longueur {self.__longueur} et hauteur {self.__hauteur} est libre."
-        return f"Place {self.__niveau}{self.numero} de longueur {self.__longueur} et hauteur {self.__hauteur} est occupé."
+            return f"Place {self.__niveau}{self.numero} de hauteur {self.__hauteur} et longueur {self.__longueur} est libre."
+        return f"Place {self.__niveau}{self.numero} de hauteur {self.__hauteur} et longueur {self.__longueur} est occupé."

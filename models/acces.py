@@ -81,21 +81,19 @@ class Acces:
         # 2. Recherche d'une place physique dans le parking
         placeAssignee = self.MonParking.rechercherPlace(voiture)
 
-        if placeAssignee:
+        if c.estSuperAbonne:
+            message = self.TelEntree.teleporterVoitureSuperAbonne(voiture)
+            return f"Bienvenue {c.nom}. {message}"
+
+        elif placeAssignee is not None:
             # CAS 1 : Il y a de la place
             if not c.estAbonne:
-                self.maBorne.deliverTicket(c)
+                self.maBorne.proposerTypePaiement()
+                self.maBorne.proposerAbonnements(c, self.MonParking)
+                print(self.maBorne.deliverTicket(c))
 
             # Téléportation standard
             self.TelEntree.teleporterVoiture(voiture, placeAssignee)
-            return f"Bienvenue {c.nom}. Place assignée : {placeAssignee.numero}"
-
-        else:
-            # CAS 2 : Le parking est physiquement complet
-            if c.estSuperAbonne:
-                # Gestion spécifique pour le Pack Garanti (Stationnement assuré)
-                message = self.TelEntree.teleporterVoitureSuperAbonne(voiture)
-                return f"Bienvenue {c.nom}. {message}"
-            else:
-                # Refus d'entrée pour les clients normaux ou abonnés simples
-                return "Désolé, le parking est complet."
+            placeAssignee.definir_estLibre(False)
+            return f"Bienvenue {c.nom}. Place assignée : {placeAssignee.obtenir_niveau()}{placeAssignee.numero}"
+        return "Désolé, le parking est complet."

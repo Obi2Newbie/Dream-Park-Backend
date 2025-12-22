@@ -22,7 +22,7 @@ class Abonnement:
             - Prépare l’objet pour être associé à un contrat ou un client.
         """
         self.libelle = libelle
-        self.prix = prix
+        self.prix = float(prix)
         self.estPackGar = estPackGar
         self.mesAbonnements = []
 

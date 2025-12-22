@@ -23,8 +23,8 @@ class Voiture:
             estDansParking (bool, optionnel): True si le véhicule est déjà stationné
                 dans le parking (par défaut False).
         """
-        self.__hauteur = hauteur
-        self.__longueur = longueur
+        self.__hauteur = float(hauteur)
+        self.__longueur = float(longueur)
         self.__immatriculation = immatriculation
         self.estDansParking = estDansParking
         self.proprietaire = None

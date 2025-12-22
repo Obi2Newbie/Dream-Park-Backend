@@ -78,7 +78,7 @@ class Client:
             - Associe le véhicule à ce client.
             - Vérifie la validité de l’immatriculation.
         """
-        self.maVoiture =  Voiture(hautV, longV, imma, self)
+        self.maVoiture =  Voiture(hautV, longV, imma)
 
     def seDesabonner(self):
         """

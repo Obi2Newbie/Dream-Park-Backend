@@ -23,7 +23,7 @@ class Borne_ticket:
             - Enregistre les informations nécessaires (heure d’entrée, identifiant du ticket, etc.).
             - Peut imprimer le ticket physiquement ou l’envoyer sous format numérique.
         """
-        return f"{c.nom}-{c.maVoiture}"
+        return f"{c.nom}-{c.maVoiture.obtenirImmatriculation()}"
 
     def proposerServices(self):
         """
@@ -55,9 +55,21 @@ class Borne_ticket:
             - Permet la souscription immédiate si le client accepte une offre.
             - Peut inclure des offres spéciales ou des réductions pour les utilisateurs fréquents.
         """
-        return "Abonnements disponibles: Standard, Pack Garantie"
+        while True:
+            abonnement = input("Abonnements disponibles: Appuyer sur 1 pour Standard / Appuyer sur 2 pour Super Abonné / Appuyer sur 3 pour Aucun Abonnement\n")
+            if abonnement in ["1", "2", "3"]:
+                break
+            else:
+                print("Erreur : Veuillez appuyer sur le bon bouton.")
+        match abonnement:
+            case "1":
+                print("Merci pour avoir sélectionné l'abonnement Standard")
+            case "2":
+                print("Merci pour avoir sélectionné l'abonnement Super Abonné")
+            case "3":
+                print("Dommage, veillez récupérer votre ticket")
 
-    def recupererInfosCarte(self, c, p):
+    def recupererInfosCarte(self, c):
         """
         Récupère les informations de la carte d’accès ou de paiement d’un client.
 
@@ -89,4 +101,15 @@ class Borne_ticket:
             - Permet au client de choisir son mode de paiement préféré.
             - Peut vérifier la disponibilité des terminaux avant validation.
         """
-        return "Modes de paiements: CB, Espèces"
+        while True:
+            paiement = input(
+                "Abonnements disponibles: Appuyer sur 1 pour CB / Appuyer sur 2 pour Espèces \n")
+            if paiement in ["1", "2"]:
+                break
+            else:
+                print("Erreur : Veuillez appuyer sur le bon bouton.")
+        match paiement:
+            case "1":
+                print("Merci pour avoir sélectionné l'option CB")
+            case "2":
+                print("Merci pour avoir sélectionné l'option Espèces")
