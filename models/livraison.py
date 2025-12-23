@@ -1,4 +1,3 @@
-from datetime import date
 from .service import Service
 
 class Livraison(Service):
@@ -10,7 +9,7 @@ class Livraison(Service):
     aux abonnés premium.
     """
     def __init__(self, dateDemande, adresse, heure):
-        super.__init__(dateDemande)
+        super().__init__(dateDemande, None,"Livraison non effectué")
         self.adresse = adresse
         self.heure = heure
 

@@ -1,5 +1,4 @@
 from .service import Service
-from datetime import date
 
 class Entretien(Service):
     """
@@ -9,7 +8,7 @@ class Entretien(Service):
     tel qu’un nettoyage, une révision ou une vérification technique.
     """
     def __init__(self, dateDemande):
-        super().__init__(dateDemande)
+        super().__init__(dateDemande,None, "Entretien non effectué")
 
     def effectuerEntretien(self):
         """

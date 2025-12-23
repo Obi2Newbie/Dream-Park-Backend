@@ -1,5 +1,4 @@
 from .service import Service
-from datetime import date
 class Maintenance(Service):
     """
     Représente une opération de maintenance effectuée sur un véhicule
@@ -17,7 +16,7 @@ class Maintenance(Service):
             - Peut initialiser des informations internes comme la date, le technicien ou le type de maintenance.
             - Les détails spécifiques seront définis lors de l’exécution de la maintenance.
         """
-        super.__init__(dateDemande)
+        super().__init__(dateDemande, None,"Maintenance non effectué")
 
     def effectuerMaintenance(self, v):
         """

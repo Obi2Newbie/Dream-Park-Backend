@@ -1,5 +1,10 @@
 from .voiture import Voiture
-
+from .voiturier import Voiturier
+from .maintenance import Maintenance
+from .livraison import Livraison
+from .entretien import Entretien
+import time
+from datetime import datetime
 class Acces:
     """
     Représente un accès du parking DreamPark, permettant la gestion
@@ -77,9 +82,11 @@ class Acces:
         # 1. Identification du véhicule via la caméra
         # Note : actionnerCamera crée ou met à jour l'objet Voiture
         voiture = self.actionnerCamera(c)
-
+        statut = self.maBorne.recupererInfosCarte(c)
+        print(statut)
         # 2. Recherche d'une place physique dans le parking
         placeAssignee = self.MonParking.rechercherPlace(voiture)
+
 
         if c.estSuperAbonne:
             message = self.TelEntree.teleporterVoitureSuperAbonne(voiture)
@@ -87,13 +94,53 @@ class Acces:
 
         elif placeAssignee is not None:
             # CAS 1 : Il y a de la place
+            while True:
+                temp = input("Est vous un abonné ? y/n\n").lower()
+                if temp in ["y", "n"]:
+                    break
+            print("Vérification de votre statut client... Veillez patienter...")
+            time.sleep(1)
             if not c.estAbonne:
                 self.maBorne.proposerTypePaiement()
                 self.maBorne.proposerAbonnements(c, self.MonParking)
                 print(self.maBorne.deliverTicket(c))
+                return f"Bienvenue {c.nom}"
 
             # Téléportation standard
+            service = self.maBorne.proposerServices()
+            print("Service est ", service)
+            match service:
+                case "1":
+                    print(">> Ajout du service : Maintenance Technique")
+                    c.demanderMaintenance()
+                case "2":
+                    print(">> Ajout du service : Entretien Véhicule")
+                    c.demanderEntretien()
+                case "3":
+                    print(">> Ajout du service : Livraison (Voiturier)")
+                    while True:
+                        date_input = input("   Veuillez saisir la date de livraison (JJ/MM/AAAA) : ")
+                        try:
+                            # 1. On essaie de convertir la chaîne en objet Date
+                            date_obj = datetime.strptime(date_input, "%d/%m/%Y")
+
+                            # 2. (Optionnel) Vérifier que la date n'est pas passée
+                            if date_obj.date() < datetime.now().date():
+                                print("   Erreur : Vous ne pouvez pas choisir une date passée.")
+                                continue
+
+                            # Si tout est bon, on valide et on garde la chaîne
+                            date_liv = date_input
+                            break
+                        except ValueError:
+                            print("   Erreur : Format invalide. Utilisez le format JJ/MM/AAAA (ex: 25/12/2025).")
+                    heure_liv = input("   Veuillez saisir l'heure ex 6 pour 6h ou 18 pour 18h : ")
+                    adresse_liv = input("   Veuillez saisir l'adresse de livraison : ")
+                    c.demanderLivraison(date_liv, heure_liv, adresse_liv)
+                case "4":
+                    print(">> Aucun service supplémentaire sélectionné.")
+
             self.TelEntree.teleporterVoiture(voiture, placeAssignee)
             placeAssignee.definir_estLibre(False)
             return f"Bienvenue {c.nom}. Place assignée : {placeAssignee.obtenir_niveau()}{placeAssignee.numero}"
-        return "Désolé, le parking est complet."
+        return "Aucune place disponible pour votre véhicule."
