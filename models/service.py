@@ -1,3 +1,4 @@
+
 class Service:
     """
     Représente un service fourni par le système DreamPark,
@@ -9,7 +10,7 @@ class Service:
         rapport (str) : Compte rendu ou rapport généré à la suite du service.
     """
 
-    def __init__(self):
+    def __init__(self, dateDemande, dateService, rapport):
         """
         Initialise un objet Service.
 
@@ -18,4 +19,6 @@ class Service:
             - Prépare l'objet pour l'enregistrement ou l'utilisation dans le système.
             - Les dates et le rapport seront définis ou mis à jour ultérieurement.
         """
-        pass
+        self.dateDemande = dateDemande
+        self.dateService = dateService
+        self.rapport = rapport

@@ -1,3 +1,5 @@
+from .placement import Placement
+
 class Voiture:
     """
     Représente une voiture gérée par le système DreamPark.
@@ -9,19 +11,24 @@ class Voiture:
         estDansParking (bool) : Indique si le véhicule est actuellement stationné dans le parking.
     """
 
-    def __init__(self, hauteur, longueur, immatriculation, estDansParking):
+    def __init__(self, hauteur, longueur, immatriculation, estDansParking = False):
         """
         Initialise une nouvelle voiture avec ses caractéristiques physiques
         et son statut de stationnement.
 
         Attributs:
-            hauteur (float): Hauteur du véhicule en mètres.
-            longueur (float): Longueur du véhicule en mètres.
-            immatriculation (str): Numéro d'immatriculation du véhicule.
+            __hauteur (float): Hauteur du véhicule en mètres.
+            __longueur (float): Longueur du véhicule en mètres.
+            __immatriculation (str): Numéro d'immatriculation du véhicule.
             estDansParking (bool, optionnel): True si le véhicule est déjà stationné
                 dans le parking (par défaut False).
         """
-        pass
+        self.__hauteur = float(hauteur)
+        self.__longueur = float(longueur)
+        self.__immatriculation = immatriculation
+        self.estDansParking = estDansParking
+        self.proprietaire = None
+        self.monPlacement = None
 
     def addPlacementV(self, p):
         """
@@ -36,7 +43,8 @@ class Voiture:
             - Met à jour l’attribut `estDansParking` à True.
             - Peut notifier le système central du changement d’état du véhicule.
         """
-        pass
+        self.monPlacement = p
+        self.estDansParking = True
 
     def obtenirHauteur(self):
         """
@@ -49,7 +57,7 @@ class Voiture:
             - Fournit la valeur enregistrée de la hauteur du véhicule.
             - Utilisé notamment par la caméra ou le système de vérification de gabarit.
         """
-        pass
+        return self.__hauteur
 
     def definirHauteur(self, hauteur):
         """
@@ -62,7 +70,7 @@ class Voiture:
             - Met à jour la hauteur enregistrée du véhicule.
             - Peut être appelée après une mesure effectuée par la caméra.
         """
-        pass
+        self.__hauteur = hauteur
 
     def obtenirLongueur(self):
         """
@@ -75,7 +83,7 @@ class Voiture:
             - Fournit la valeur enregistrée de la longueur du véhicule.
             - Utilisé pour déterminer la compatibilité avec les emplacements disponibles.
         """
-        pass
+        return self.__longueur
 
     def definirLongueur(self, longueur):
         """
@@ -88,7 +96,7 @@ class Voiture:
             - Met à jour la longueur du véhicule.
             - Peut être appelée après une mesure effectuée par la caméra ou le capteur.
         """
-        pass
+        self.__longueur = longueur
 
     def obtenirImmatriculation(self):
         """
@@ -101,7 +109,7 @@ class Voiture:
             - Fournit la plaque d’immatriculation du véhicule.
             - Sert à identifier le véhicule lors des entrées/sorties ou pour les abonnements.
         """
-        pass
+        return self.__immatriculation
 
     def definirImmatriculation(self, immatriculation):
         """
@@ -114,4 +122,5 @@ class Voiture:
             - Met à jour l’immatriculation enregistrée.
             - Peut être appelée après une reconnaissance optique de la plaque par la caméra.
         """
-        pass
+        self.__immatriculation = immatriculation
+

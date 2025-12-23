@@ -7,10 +7,10 @@ class Place:
         __niveau (str) : Niveau ou étage où se trouve la place
         __longueur (float) : Longueur maximale disponible pour un véhicule sur cette place.
         __estLibre (bool) : Indique si la place est actuellement libre ou occupée.
-        hauteur (float) : Hauteur maximale autorisée pour les véhicules.
+        __hauteur (float) : Hauteur maximale autorisée pour les véhicules.
     """
 
-    def __init__(self, numero, niveau, longueur, estLibre, hauteur):
+    def __init__(self, numero, niveau, longueur, hauteur):
         """
         Initialise une place de parking avec ses caractéristiques principales.
 
@@ -25,7 +25,12 @@ class Place:
             - Enregistre les caractéristiques physiques de la place.
             - Définit son état initial (libre ou occupée).
         """
-        pass
+        self.numero = numero
+        self.__niveau = niveau
+        self.__longueur = float(longueur)
+        self.__estLibre = True
+        self.__hauteur = float(hauteur)
+        self.monPlacement = None
 
     def addPlacementP(self, p):
         """
@@ -40,4 +45,59 @@ class Place:
             - Peut mettre à jour l’état `__estLibre` selon le statut du placement.
             - Sert à tracer quel véhicule occupe actuellement cette place.
         """
-        pass
+        self.monPlacement = p
+        self.estLibre = False
+
+    def obtenir_niveau(self):
+        """
+        Retourne le niveau ou l'étage où se situe la place.
+
+        Returns:
+            str: L'identifiant du niveau (ex: "Niveau 0").
+        """
+        return self.__niveau
+
+    def obtenir_longueur(self):
+        """
+        Retourne la longueur maximale autorisée pour cette place.
+
+        Returns:
+            float: La longueur de la place en mètres.
+        """
+        return self.__longueur
+
+    def obtenir_estLibre(self):
+        """
+        Vérifie si la place est actuellement disponible.
+
+        Returns:
+            bool: True si la place est libre, False si elle est occupée.
+        """
+        return self.__estLibre
+
+    def definir_estLibre(self, estLibre):
+        """
+        Modifie l'état de disponibilité de la place.
+
+        Args:
+            estLibre (bool): Le nouvel état (True pour libre, False pour occupé).
+
+        Comportement attendu :
+            - Met à jour l'attribut privé __estLibre.
+            - Permet au système de parking de suivre l'occupation en temps réel.
+        """
+        self.__estLibre = estLibre
+
+    def obtenir_hauteur(self):
+        """
+        Retourne la hauteur maximale autorisée pour cette place.
+
+        Returns:
+            float: La hauteur de la place en mètres.
+        """
+        return self.__hauteur
+
+    def __str__(self):
+        if self.__estLibre:
+            return f"Place {self.__niveau}{self.numero} de hauteur {self.__hauteur} et longueur {self.__longueur} est libre."
+        return f"Place {self.__niveau}{self.numero} de hauteur {self.__hauteur} et longueur {self.__longueur} est occupé."

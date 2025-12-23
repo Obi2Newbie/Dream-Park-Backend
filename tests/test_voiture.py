@@ -14,6 +14,7 @@ class TestVoiture(unittest.TestCase):
     def test_add_placement(self):
         """Teste l’association d’un placement à une voiture."""
         pass
+
     def test_obtenir_hauteur(self):
         """
         Vérifie que la méthode obtenirHauteur() renvoie la hauteur attendue.

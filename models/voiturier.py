@@ -18,7 +18,7 @@ class Voiturier:
             - Enregistre l’identifiant du voiturier.
             - Prépare l’objet pour être associé à une opération de livraison ou de récupération.
         """
-        pass
+        self.numVoiturier = numVoiturier
 
     def livrerVoiture(self, v, date, heure):
         """
@@ -34,4 +34,17 @@ class Voiturier:
             - Coordonne l’action avec le service client ou le téléporteur.
             - Peut générer un rapport ou une confirmation de livraison.
         """
-        pass
+        if not v.estDansParking:
+            return f"Erreur : La voiture {v.obtenirImmatriculation()} n'est pas dans le parking."
+        if v.monPlacement:
+            v.partirPlace()
+        if v.proprietaire and hasattr(v.proprietaire, 'mesServices'):
+            for service in v.proprietaire.mesServices:
+                # Si c'est un service de livraison prévu pour cette date
+                if hasattr(service, 'adresse') and service.dateDemande == date:
+                    service.dateService = date.today()
+                    service.rapport = (f"Livraison effectuée avec succès à {heure}h "
+                                       f"par le voiturier n°{self.numVoiturier}.")
+                    break
+
+        return f"Le voiturier {self.numVoiturier} a livré la voiture {v.obtenirImmatriculation()} le {date} à {heure}h."

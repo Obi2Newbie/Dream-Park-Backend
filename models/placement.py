@@ -1,3 +1,5 @@
+from datetime import date
+
 class Placement:
     """
     Représente le placement d'un véhicule dans une place de parking DreamPark.
@@ -13,15 +15,18 @@ class Placement:
         Initialise un nouveau placement pour un véhicule dans le parking.
 
         Args:
-            dateDebut (date): Date à laquelle le véhicule est entré dans le parking.
-            dateFin (date, optionnel): Date prévue ou réelle de sortie (par défaut None).
-            estEnCours (bool, optionnel): True si le véhicule est toujours garé (par défaut True).
+            dateDebut (date) : Date à laquelle le véhicule est entré dans le parking.
+            dateFin (date, optionnel) : Date prévue ou réelle de sortie (par défaut None).
+            estEnCours (bool, optionnel) : True si le véhicule est toujours garé (par défaut True).
         """
-        pass
+        self.dateDebut = dateDebut
+        self.dateFin = dateFin
+        self.estEnCours = estEnCours
 
     def partirPlace(self):
         """
         Termine le placement actuel lorsque le véhicule quitte le parking.
 
         """
-        pass
+        self.estEnCours =False
+        self.dateFin = date.today()

@@ -1,4 +1,11 @@
-import pydoc
+from .voiture import Voiture
+from .contrat import Contrat
+from .maintenance import Maintenance
+from .livraison import Livraison
+from .entretien import Entretien
+from datetime import date
+
+
 class Client:
     """
     Représente un client du système DreamPark.
@@ -11,7 +18,7 @@ class Client:
         nbFrequentation (int) : Nombre de visites ou de passages enregistrés dans le parking.
     """
 
-    def __init__(self, nom, adresse, estAbonne, estSuperAbonne, nbFrequentation):
+    def __init__(self, nom, adresse, estAbonne=False, estSuperAbonne=False, nbFrequentation=0):
         """
         Initialise un nouveau client avec ses informations de base.
 
@@ -22,7 +29,15 @@ class Client:
             estSuperAbonne (bool, optionnel): Statut de pack garanti (par défaut False).
             nbFrequentation (int, optionnel): Nombre initial de fréquentations (par défaut 0).
         """
-        pass
+        self.nom = nom
+        self.adresse = adresse
+        self.estAbonne = estAbonne
+        self.estSuperAbonne = estSuperAbonne
+        self.nbFrequentation = nbFrequentation
+        self.mesServices = []
+        self.maVoiture = None
+        self.monAbonnement = None
+        self.monContrat = None
 
     def sAbonner(self, ab):
         """
@@ -36,7 +51,18 @@ class Client:
             - Si non, applique les avantages liés à l’abonnement choisi.
             - Met à jour les attributs `estAbonne` et éventuellement `estSuperAbonne`.
         """
-        pass
+        nouvContrat = Contrat(date.today(), None, True)
+        nouvContrat.monAbonnement = ab
+        ab.addContrat(nouvContrat)
+
+        self.monContrat = nouvContrat
+        self.monAbonnement = ab
+        self.estAbonne = True
+
+        if ab.estPackGar:
+            self.estSuperAbonne = True
+        return "Abonnement validé, merci de nous faire confiance!"
+
 
     def nouvelleVoiture(self, imma, hautV, longV):
         """
@@ -52,7 +78,7 @@ class Client:
             - Associe le véhicule à ce client.
             - Vérifie la validité de l’immatriculation.
         """
-        pass
+        self.maVoiture =  Voiture(hautV, longV, imma)
 
     def seDesabonner(self):
         """
@@ -63,7 +89,11 @@ class Client:
             - Met à jour les attributs `estAbonne` et `estSuperAbonne` à False.
             - Peut déclencher une notification ou un message de confirmation.
         """
-        pass
+        if self.monContrat:
+            self.monContrat.rompreContract()
+        self.estAbonne = False
+        self.estSuperAbonne = False
+        self.monAbonnement = None
 
     def demanderMaintenance(self):
         """
@@ -74,7 +104,11 @@ class Client:
             - Crée une demande de maintenance associée à ce véhicule.
             - Retourne un identifiant ou un objet de suivi de maintenance.
         """
-        pass
+        if self.estAbonne:
+            service = Maintenance(date.today())
+            self.mesServices.append(service)
+            return service
+        return "Service réservé aux abonnés"
 
     def demanderLivraison(self, dateLiv, heure, adresseLiv):
         """
@@ -91,7 +125,9 @@ class Client:
             - Planifie la livraison dans le système.
             - Retourne un objet de confirmation ou une référence de livraison.
         """
-        pass
+        livraison = Livraison(dateLiv, heure, adresseLiv)
+        self.mesServices.append(livraison)
+        return livraison
 
     def demanderEntretien(self):
         """
@@ -102,7 +138,10 @@ class Client:
             - Associe cette demande au véhicule principal du client.
             - Retourne un reçu ou une confirmation d’entretien planifié.
         """
-        pass
+        if self.estAbonne:
+            service = Entretien(date.today())
+            self.mesServices.append(service)
+        return "Seule les abonnés peuvent rajouté ce service"
 
     def entreParking(self, a):
         """
@@ -116,4 +155,5 @@ class Client:
             - Met à jour le nombre de fréquentations du client (`nbFrequentation`).
             - Lance le processus d’attribution d’une place via le système de parking.
         """
-        pass
+        a.lancerProcedureEntree(self)
+        self.nbFrequentation += 1

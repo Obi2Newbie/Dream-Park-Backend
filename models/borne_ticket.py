@@ -1,3 +1,8 @@
+import time
+
+from models import Abonnement
+
+
 class Borne_ticket:
     """
     Représente une borne de ticket du système DreamPark.
@@ -7,17 +12,6 @@ class Borne_ticket:
         - Proposition de services ou d’abonnements.
         - Gestion des informations de paiement et de carte.
     """
-
-    def __init__(self):
-        """
-        Initialise un objet `Borne_ticket`.
-
-        Comportement attendu :
-            - Prépare la borne à fonctionner pour la délivrance de tickets et la gestion client.
-            - Peut initialiser les composants matériels ou logiciels nécessaires (lecteur de carte, écran, etc.).
-            - Les détails d’initialisation seront définis ultérieurement selon le type de borne.
-        """
-        pass
 
     def deliverTicket(self, c):
         """
@@ -34,7 +28,7 @@ class Borne_ticket:
             - Enregistre les informations nécessaires (heure d’entrée, identifiant du ticket, etc.).
             - Peut imprimer le ticket physiquement ou l’envoyer sous format numérique.
         """
-        pass
+        return f"{c.nom}-{c.maVoiture.obtenirImmatriculation()}"
 
     def proposerServices(self):
         """
@@ -48,7 +42,11 @@ class Borne_ticket:
             - Permet au client de sélectionner une option parmi les propositions.
             - Peut afficher les coûts ou les avantages associés.
         """
-        pass
+        while True:
+            service = input("Services:\n1. pour Maintenance,\n2. pour Entretien,\n3. pour Livraison,\n4. pour aucun service\n")
+            if service in ["1", "2", "3", "4"]:
+                break
+        return service
 
     def proposerAbonnements(self, c, p):
         """
@@ -66,15 +64,37 @@ class Borne_ticket:
             - Permet la souscription immédiate si le client accepte une offre.
             - Peut inclure des offres spéciales ou des réductions pour les utilisateurs fréquents.
         """
-        pass
+        print("\n--- BIENVENUE CHEZ DREAMPARK ---")
+        print(f"Ravi de vous rencontrer, {c.nom}.")
+        print("Souhaitez-vous souscrire à un abonnement pour cette visite ?\n")
+        while True:
+            choix = input("1. pour abonnement standard\n2. pour super abonné\n3. pour continue sans abonnement\n")
+            if choix in ["1", "2", "3"]:
+                break
+        match choix:
+            case "1":
+                abonnement = Abonnement("abonne", 10, False)
+                c.estAbonne = True
+                c.estSuperAbonne = False
+                c.sAbonner(abonnement)
+                p.addAbonnement(abonnement)
+            case "2":
+                abonnement = Abonnement("abonne", 5, True)
+                c.estAbonne = True
+                c.estSuperAbonne = True
+                c.sAbonner(abonnement)
+                p.addAbonnement(abonnement)
+            case "3":
+                c.estAbonne = True
+                c.estSuperAbonne = False
+        print("Préférences enregistrées.")
 
-    def recupererInfosCarte(self, c, p):
+    def recupererInfosCarte(self, c):
         """
         Récupère les informations de la carte d’accès ou de paiement d’un client.
 
         Args:
             c (Client): Objet représentant le client utilisant la borne.
-            p (Parking): Objet représentant le parking associé à la carte.
 
         Returns:
             string: Informations de la carte ou message d’état (succès/échec).
@@ -84,7 +104,15 @@ class Borne_ticket:
             - Vérifie la validité de la carte (date d’expiration, abonnement actif, etc.).
             - Met à jour les informations du client dans le système.
         """
-        pass
+        while True:
+            temp = input("Est vous un super abonné ? y/n\n").lower()
+            if temp in ["y", "n"]:
+                break
+        print("Vérification de votre statut client... Veillez patienter...")
+        time.sleep(1)
+        if c.estSuperAbonne and temp == 'y':
+            return f"Carte validée pour {c.nom}"
+        return "Client non super abonné"
 
     def proposerTypePaiement(self):
         """
@@ -98,4 +126,15 @@ class Borne_ticket:
             - Permet au client de choisir son mode de paiement préféré.
             - Peut vérifier la disponibilité des terminaux avant validation.
         """
-        pass
+        while True:
+            paiement = input(
+                "Comment allez vous regler le paiement ?: Appuyer sur 1 pour CB / Appuyer sur 2 pour Espèces \n")
+            if paiement in ["1", "2"]:
+                break
+            else:
+                print("Erreur : Veuillez appuyer sur le bon bouton.")
+        match paiement:
+            case "1":
+                print("Merci pour avoir sélectionné l'option CB")
+            case "2":
+                print("Merci pour avoir sélectionné l'option Espèces")

@@ -1,4 +1,5 @@
-class Maintenance:
+from .service import Service
+class Maintenance(Service):
     """
     Représente une opération de maintenance effectuée sur un véhicule
     dans le cadre du système DreamPark.
@@ -6,8 +7,7 @@ class Maintenance:
     Ce service peut inclure des vérifications techniques, des réparations
     mineures ou des interventions programmées pour assurer le bon état du véhicule.
     """
-
-    def __init__(self):
+    def __init__(self, dateDemande):
         """
         Initialise un objet `Maintenance`.
 
@@ -16,7 +16,7 @@ class Maintenance:
             - Peut initialiser des informations internes comme la date, le technicien ou le type de maintenance.
             - Les détails spécifiques seront définis lors de l’exécution de la maintenance.
         """
-        pass
+        super().__init__(dateDemande, None,"Maintenance non effectué")
 
     def effectuerMaintenance(self, v):
         """
@@ -31,4 +31,5 @@ class Maintenance:
             - Peut générer un rapport de maintenance ou notifier le client.
             - Interagit avec d’autres services (entretien, livraison, etc.) si nécessaire.
         """
-        pass
+        self.rapport = f"Maintenance effectuée sur {v.obtenirImmatriculation()}"
+        return self.rapport
