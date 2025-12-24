@@ -139,7 +139,7 @@ class Acces:
                     c.demanderLivraison(date_liv, heure_liv, adresse_liv)
                 case "4":
                     print(">> Aucun service supplémentaire sélectionné.")
-
+            print(self.maBorne.deliverTicket(c))
             self.TelEntree.teleporterVoiture(voiture, placeAssignee)
             placeAssignee.definir_estLibre(False)
             return f"Bienvenue {c.nom}. Place assignée : {placeAssignee.obtenir_niveau()}{placeAssignee.numero}"
