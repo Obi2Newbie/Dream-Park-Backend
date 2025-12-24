@@ -18,7 +18,6 @@ class Place:
             numero (int): Numéro identifiant la place.
             niveau (str): Niveau du parking où se trouve la place.
             longueur (float): Longueur maximale acceptée pour un véhicule.
-            estLibre (bool): True si la place est libre, False si elle est occupée.
             hauteur (float): Hauteur maximale autorisée pour un véhicule.
 
         Comportement attendu :
@@ -38,15 +37,16 @@ class Place:
         à cette place de parking.
 
         Attributs:
-            p (placement): Objet représentant le placement d’un véhicule sur cette place.
+            p (placement): Objet représentant le placement d'un véhicule sur cette place.
 
         Comportement attendu :
             - Lie la place à un placement spécifique.
-            - Peut mettre à jour l’état `__estLibre` selon le statut du placement.
-            - Sert à tracer quel véhicule occupe actuellement cette place.
+            - Met à jour l'état `__estLibre` selon le statut du placement.
+            - Établit une référence bidirectionnelle entre Place et Placement.
         """
         self.monPlacement = p
-        self.estLibre = False
+        p.maPlace = self  # Établir la référence bidirectionnelle
+        self.__estLibre = False
 
     def obtenir_niveau(self):
         """
@@ -87,6 +87,9 @@ class Place:
             - Permet au système de parking de suivre l'occupation en temps réel.
         """
         self.__estLibre = estLibre
+        # Si la place est libérée, supprimer la référence au placement
+        if estLibre:
+            self.monPlacement = None
 
     def obtenir_hauteur(self):
         """
