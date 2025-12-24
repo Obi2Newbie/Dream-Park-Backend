@@ -1,35 +1,38 @@
 from .service import Service
+
+
 class Maintenance(Service):
     """
-    Représente une opération de maintenance effectuée sur un véhicule
-    dans le cadre du système DreamPark.
+    Représente un service de maintenance technique pour véhicules.
 
-    Ce service peut inclure des vérifications techniques, des réparations
-    mineures ou des interventions programmées pour assurer le bon état du véhicule.
+    Service incluant diagnostics techniques, vérifications approfondies
+    et interventions mécaniques mineures réalisées par des techniciens
+    qualifiés dans le parking DreamPark.
+
+    Hérite de Service pour la gestion des dates et rapports.
     """
+
     def __init__(self, dateDemande):
         """
-        Initialise un objet `Maintenance`.
+        Initialise une demande de maintenance.
 
-        Comportement attendu :
-            - Prépare la création d’une opération de maintenance.
-            - Peut initialiser des informations internes comme la date, le technicien ou le type de maintenance.
-            - Les détails spécifiques seront définis lors de l’exécution de la maintenance.
+        Args:
+            dateDemande (date): Date à laquelle le client a demandé le service.
         """
-        super().__init__(dateDemande, None,"Maintenance non effectué")
+        super().__init__(dateDemande, None, "Maintenance non effectué")
 
     def effectuerMaintenance(self, v):
         """
-        Effectue la maintenance sur un véhicule donné.
+        Exécute la maintenance sur un véhicule et génère un rapport.
 
         Args:
-            v (Voiture): Objet représentant le véhicule nécessitant une maintenance.
+            v (Voiture): Le véhicule nécessitant la maintenance.
 
-        Comportement attendu :
-            - Réalise les actions prévues pour la maintenance du véhicule.
-            - Met à jour les informations associées à l’état ou à l’historique du véhicule.
-            - Peut générer un rapport de maintenance ou notifier le client.
-            - Interagit avec d’autres services (entretien, livraison, etc.) si nécessaire.
+        Returns:
+            str: Rapport confirmant la maintenance avec l'immatriculation.
+
+        Side Effects:
+            Met à jour l'attribut rapport avec les détails d'intervention.
         """
         self.rapport = f"Maintenance effectuée sur {v.obtenirImmatriculation()}"
         return self.rapport

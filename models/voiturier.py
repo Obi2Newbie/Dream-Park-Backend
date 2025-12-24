@@ -1,46 +1,55 @@
 class Voiturier:
     """
-    Représente un voiturier du système DreamPark.
+    Représente un employé voiturier du service premium DreamPark.
 
-    Le voiturier est responsable de la livraison ou de la récupération
-    des véhicules des clients, notamment dans le cadre de services
-    premium ou de super abonnements.
+    Professionnel chargé de la livraison et récupération des véhicules
+    des clients Super Abonnés ou ayant souscrit au service de livraison.
+
+    Attributes:
+        numVoiturier (int): Identifiant unique du voiturier.
     """
 
     def __init__(self, numVoiturier):
         """
-        Initialise un objet `Voiturier`.
+        Initialise un voiturier avec son identifiant.
 
         Args:
-            numVoiturier (int): Numéro d’identification unique du voiturier.
-
-        Comportement attendu :
-            - Enregistre l’identifiant du voiturier.
-            - Prépare l’objet pour être associé à une opération de livraison ou de récupération.
+            numVoiturier (int): Numéro d'identification unique.
         """
         self.numVoiturier = numVoiturier
 
     def livrerVoiture(self, v, date, heure):
         """
-        Effectue la livraison d’un véhicule à un client à une date et une heure précises.
+        Effectue la livraison d'un véhicule à l'adresse du client.
+
+        Le voiturier récupère le véhicule dans le parking, le conduit
+        jusqu'à l'adresse de livraison programmée et génère un rapport.
 
         Args:
-            v (Voiture): Objet représentant le véhicule à livrer.
-            date (date): Date prévue pour la livraison du véhicule.
-            heure (int): Heure de la livraison.
+            v (Voiture): Le véhicule à livrer.
+            date (date): Date prévue de livraison.
+            heure (str): Heure de livraison (ex: "14" pour 14h).
 
-        Comportement attendu :
-            - Gère la préparation et le déplacement du véhicule pour sa livraison.
-            - Coordonne l’action avec le service client ou le téléporteur.
-            - Peut générer un rapport ou une confirmation de livraison.
+        Returns:
+            str: Message confirmant la livraison ou erreur si véhicule absent.
+
+        Side Effects:
+            - Termine le placement du véhicule (v.partirPlace())
+            - Met à jour le rapport du service de livraison associé
+            - Marque le service comme effectué
+
+        Raises:
+            Retourne un message d'erreur si le véhicule n'est pas dans le parking.
         """
         if not v.estDansParking:
             return f"Erreur : La voiture {v.obtenirImmatriculation()} n'est pas dans le parking."
+
         if v.monPlacement:
-            v.partirPlace()
+            v.monPlacement.partirPlace()
+
+        # Mise à jour du service de livraison si trouvé
         if v.proprietaire and hasattr(v.proprietaire, 'mesServices'):
             for service in v.proprietaire.mesServices:
-                # Si c'est un service de livraison prévu pour cette date
                 if hasattr(service, 'adresse') and service.dateDemande == date:
                     service.dateService = date.today()
                     service.rapport = (f"Livraison effectuée avec succès à {heure}h "

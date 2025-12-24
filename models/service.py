@@ -1,23 +1,24 @@
-
 class Service:
     """
-    Représente un service fourni par le système DreamPark,
-    tel qu'une livraison, un entretien ou une maintenance.
+    Classe de base abstraite pour tous les services DreamPark.
 
-    Attributs :
-        dateDemande (date) : Date à laquelle le client a effectué la demande du service.
-        dateService (date) : Date prévue ou réalisée pour la prestation du service.
-        rapport (str) : Compte rendu ou rapport généré à la suite du service.
+    Fournit la structure commune pour Maintenance, Entretien et Livraison,
+    avec gestion des dates et génération de rapports.
+
+    Attributes:
+        dateDemande (date): Date à laquelle le service a été demandé.
+        dateService (date): Date effective de réalisation du service.
+        rapport (str): Compte-rendu généré après exécution du service.
     """
 
     def __init__(self, dateDemande, dateService, rapport):
         """
-        Initialise un objet Service.
+        Initialise un service avec ses informations de base.
 
-        Comportement attendu :
-            - Crée une nouvelle instance de service avec des attributs par défaut.
-            - Prépare l'objet pour l'enregistrement ou l'utilisation dans le système.
-            - Les dates et le rapport seront définis ou mis à jour ultérieurement.
+        Args:
+            dateDemande (date): Date de la demande client.
+            dateService (date): Date prévue/réalisée du service.
+            rapport (str): État initial du rapport.
         """
         self.dateDemande = dateDemande
         self.dateService = dateService

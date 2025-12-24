@@ -1,27 +1,42 @@
 from .service import Service
 
+
 class Livraison(Service):
     """
-    Représente une opération de livraison de véhicule dans le système DreamPark.
+    Représente un service de livraison de véhicule par voiturier.
 
-    Cette classe gère le processus de remise du véhicule au client,
-    qu’il s’agisse d’un service classique ou d’un avantage réservé
-    aux abonnés premium.
+    Service permettant au client de faire livrer son véhicule à une
+    adresse spécifique à une date et heure précises, sans avoir à
+    revenir au parking.
+
+    Hérite de Service pour la gestion des dates et rapports.
+
+    Attributes (en plus de Service):
+        adresse (str): Adresse de destination de la livraison.
+        heure (str): Heure prévue de livraison.
     """
+
     def __init__(self, dateDemande, heure, adresse):
-        super().__init__(dateDemande, None,"Livraison non effectué")
+        """
+        Initialise une demande de livraison.
+
+        Args:
+            dateDemande (str): Date souhaitée pour la livraison (format "JJ/MM/AAAA").
+            heure (str): Heure de livraison souhaitée (ex: "14" pour 14h).
+            adresse (str): Adresse complète de destination.
+        """
+        super().__init__(dateDemande, None, "Livraison non effectué")
         self.adresse = adresse
         self.heure = heure
 
     def effectuerLivraison(self):
         """
-        Effectue la livraison d’un véhicule au client.
+        Exécute la livraison et génère le rapport de confirmation.
 
-        Comportement attendu :
-            - Exécute l’action de remise du véhicule au client.
-            - Met à jour l’état du véhicule (livré, en attente, etc.).
-            - Peut générer un rapport ou une confirmation de livraison.
-            - Interagit éventuellement avec un voiturier ou un service associé.
+        Returns:
+            str: Rapport détaillant l'adresse et l'heure de livraison.
+
+        Side Effects:
+            Met à jour l'attribut rapport avec les détails de livraison.
         """
         self.rapport = f"Livraison effectuée à {self.adresse} à {self.heure}h"
-        return self.rapport

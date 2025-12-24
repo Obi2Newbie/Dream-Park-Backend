@@ -8,26 +8,34 @@ from datetime import date
 
 class Client:
     """
-    Représente un client du système DreamPark.
+    Représente un utilisateur du système DreamPark.
 
-    Attributs :
-        nom (str) : Nom du client.
-        adresse (str) : Adresse principale du client.
-        estAbonne (bool) : Indique si le client possède un abonnement actif.
-        estSuperAbonne (bool) : Indique si le client dispose du pack garanti (super abonnement).
-        nbFrequentation (int) : Nombre de visites ou de passages enregistrés dans le parking.
+    Un client peut posséder un ou plusieurs véhicules, souscrire à des
+    abonnements, demander des services additionnels et accéder au parking
+    selon son statut (visiteur, abonné, super abonné).
+
+    Attributes:
+        nom (str): Nom complet du client.
+        adresse (str): Adresse postale principale.
+        estAbonne (bool): True si le client possède un abonnement actif.
+        estSuperAbonne (bool): True si le client dispose du pack garanti.
+        nbFrequentation (int): Nombre de visites effectuées dans le parking.
+        mesServices (list): Liste des services demandés (Maintenance, Entretien, Livraison).
+        maVoiture (Voiture): Véhicule principal du client.
+        monAbonnement (Abonnement): Abonnement actif du client.
+        monContrat (Contrat): Contrat d'abonnement en cours.
     """
 
     def __init__(self, nom, adresse, estAbonne=False, estSuperAbonne=False, nbFrequentation=0):
         """
-        Initialise un nouveau client avec ses informations de base.
+        Initialise un nouveau client avec son profil de base.
 
-        Attributs:
+        Args:
             nom (str): Nom du client.
-            adresse (str): Adresse principale du client.
-            estAbonne (bool, optionnel): Statut d’abonnement (par défaut False).
-            estSuperAbonne (bool, optionnel): Statut de pack garanti (par défaut False).
-            nbFrequentation (int, optionnel): Nombre initial de fréquentations (par défaut 0).
+            adresse (str): Adresse principale.
+            estAbonne (bool, optional): Statut d'abonnement. Defaults to False.
+            estSuperAbonne (bool, optional): Statut pack garanti. Defaults to False.
+            nbFrequentation (int, optional): Nombre de visites. Defaults to 0.
         """
         self.nom = nom
         self.adresse = adresse
@@ -41,15 +49,21 @@ class Client:
 
     def sAbonner(self, ab):
         """
-        Permet au client de souscrire à un abonnement spécifique.
+        Souscrit à un abonnement et crée le contrat associé.
 
-        Attributs:
-            ab: Type ou objet représentant l’abonnement choisi.
+        Crée automatiquement un contrat actif et met à jour le statut
+        du client selon le type d'abonnement (standard ou pack garanti).
 
-        Comportement attendu :
-            - Vérifie si le client est déjà abonné.
-            - Si non, applique les avantages liés à l’abonnement choisi.
-            - Met à jour les attributs `estAbonne` et éventuellement `estSuperAbonne`.
+        Args:
+            ab (Abonnement): L'abonnement à souscrire.
+
+        Returns:
+            str: Message de confirmation de souscription.
+
+        Side Effects:
+            - Crée un nouveau Contrat
+            - Lie le contrat à l'abonnement
+            - Met à jour estAbonne et potentiellement estSuperAbonne
         """
         nouvContrat = Contrat(date.today(), None, True)
         nouvContrat.monAbonnement = ab
@@ -61,33 +75,34 @@ class Client:
 
         if ab.estPackGar:
             self.estSuperAbonne = True
-        return "Abonnement validé, merci de nous faire confiance!"
 
+        return "Abonnement validé, merci de nous faire confiance!"
 
     def nouvelleVoiture(self, imma, hautV, longV):
         """
-        Enregistre une nouvelle voiture appartenant au client.
+        Enregistre un nouveau véhicule pour ce client.
 
-        Attributs:
-            imma (str): Immatriculation du véhicule.
-            hautV (float): Hauteur du véhicule.
-            longV (float): Longueur du véhicule.
+        Args:
+            imma (str): Numéro d'immatriculation.
+            hautV (float): Hauteur du véhicule en mètres.
+            longV (float): Longueur du véhicule en mètres.
 
-        Comportement attendu :
-            - Crée un objet Véhicule avec les informations fournies.
-            - Associe le véhicule à ce client.
-            - Vérifie la validité de l’immatriculation.
+        Note:
+            Remplace le véhicule précédent s'il existait.
         """
-        self.maVoiture =  Voiture(hautV, longV, imma)
+        self.maVoiture = Voiture(hautV, longV, imma)
 
     def seDesabonner(self):
         """
-        Met fin à l’abonnement actuel du client.
+        Résilie l'abonnement actuel du client.
 
-        Comportement attendu :
-            - Supprime les privilèges d’abonné ou de super abonné.
-            - Met à jour les attributs `estAbonne` et `estSuperAbonne` à False.
-            - Peut déclencher une notification ou un message de confirmation.
+        Rompt le contrat en cours et réinitialise tous les privilèges
+        d'abonnement (standard et pack garanti).
+
+        Side Effects:
+            - Rompt le contrat actif
+            - Réinitialise estAbonne et estSuperAbonne à False
+            - Supprime la référence à l'abonnement
         """
         if self.monContrat:
             self.monContrat.rompreContract()
@@ -97,12 +112,13 @@ class Client:
 
     def demanderMaintenance(self):
         """
-        Permet au client de demander une opération de maintenance pour son véhicule.
+        Demande une opération de maintenance technique pour le véhicule.
 
-        Comportement attendu :
-            - Vérifie que le client possède au moins un véhicule enregistré.
-            - Crée une demande de maintenance associée à ce véhicule.
-            - Retourne un identifiant ou un objet de suivi de maintenance.
+        Service réservé aux clients abonnés (standard ou pack garanti).
+
+        Returns:
+            Maintenance: Objet représentant la demande de maintenance,
+                        ou str avec message d'erreur si non abonné.
         """
         if self.estAbonne:
             service = Maintenance(date.today())
@@ -112,18 +128,18 @@ class Client:
 
     def demanderLivraison(self, dateLiv, heure, adresseLiv):
         """
-        Permet de demander la livraison du véhicule à une adresse donnée,
-        à une date et heure précises.
+        Demande la livraison du véhicule à une adresse et date précises.
 
-        Attributs:
-            dateLiv (date): Date souhaitée pour la livraison.
-            heure (int): Heure prévue de la livraison.
-            adresseLiv (str): Adresse de destination du véhicule.
+        Un voiturier récupérera le véhicule dans le parking et le livrera
+        à l'adresse indiquée à l'heure prévue.
 
-        Comportement attendu :
-            - Vérifie si le client est abonné (ou applique des frais pour les non-abonnés).
-            - Planifie la livraison dans le système.
-            - Retourne un objet de confirmation ou une référence de livraison.
+        Args:
+            dateLiv (str): Date de livraison au format "JJ/MM/AAAA".
+            heure (str): Heure de livraison (ex: "14" pour 14h).
+            adresseLiv (str): Adresse de destination complète.
+
+        Returns:
+            Livraison: Objet représentant la demande de livraison.
         """
         livraison = Livraison(dateLiv, heure, adresseLiv)
         self.mesServices.append(livraison)
@@ -131,29 +147,29 @@ class Client:
 
     def demanderEntretien(self):
         """
-        Permet au client de demander un service d’entretien.
+        Demande un service d'entretien pour le véhicule.
 
-        Comportement attendu :
-            - Crée une demande d’entretien dans le système.
-            - Associe cette demande au véhicule principal du client.
-            - Retourne un reçu ou une confirmation d’entretien planifié.
+        Service réservé aux clients abonnés (nettoyage, révision, etc.).
+
+        Returns:
+            Entretien: Objet représentant la demande d'entretien,
+                      ou str avec message d'erreur si non abonné.
         """
         if self.estAbonne:
             service = Entretien(date.today())
             self.mesServices.append(service)
-        return "Seule les abonnés peuvent rajouté ce service"
+            return service
+        return "Seule les abonnés peuvent rajouter ce service"
 
     def entreParking(self, a):
         """
-        Décrit l’action d’entrée du client dans le parking via un accès.
+        Déclenche l'entrée du client dans le parking via un accès.
 
-        Attributs:
-            a: Objet représentant l’accès ou la porte utilisée pour entrer.
+        Lance la procédure complète d'identification, de recherche de place
+        et de téléportation, puis incrémente le compteur de fréquentation.
 
-        Comportement attendu :
-            - Déclenche la capture des informations du véhicule (caméra, taille, plaque).
-            - Met à jour le nombre de fréquentations du client (`nbFrequentation`).
-            - Lance le processus d’attribution d’une place via le système de parking.
+        Args:
+            a (Acces): Le point d'accès utilisé pour entrer.
         """
         a.lancerProcedureEntree(self)
         self.nbFrequentation += 1

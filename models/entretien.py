@@ -1,24 +1,34 @@
 from .service import Service
 
+
 class Entretien(Service):
     """
-    Représente une opération d’entretien de véhicule dans le système DreamPark.
+    Représente un service d'entretien de véhicule dans DreamPark.
 
-    Cette classe correspond à un service effectué sur un véhicule,
-    tel qu’un nettoyage, une révision ou une vérification technique.
+    Service incluant nettoyage intérieur/extérieur, vérifications
+    techniques mineures, et maintenance préventive de base.
+
+    Hérite de Service pour la gestion des dates et rapports.
     """
+
     def __init__(self, dateDemande):
-        super().__init__(dateDemande,None, "Entretien non effectué")
+        """
+        Initialise une demande d'entretien.
+
+        Args:
+            dateDemande (date): Date à laquelle le client a demandé le service.
+        """
+        super().__init__(dateDemande, None, "Entretien non effectué")
 
     def effectuerEntretien(self):
         """
-        Exécute le service d’entretien du véhicule.
+        Exécute le service d'entretien et génère un rapport.
 
-        Comportement attendu :
-            - Réalise les actions prévues dans le cadre de l’entretien.
-            - Met à jour l’état du véhicule ou du dossier d’entretien.
-            - Peut générer un rapport détaillant les opérations effectuées.
-            - Interagit éventuellement avec d’autres services du système DreamPark.
+        Returns:
+            str: Rapport confirmant la réalisation de l'entretien.
+
+        Side Effects:
+            Met à jour l'attribut rapport avec le compte-rendu.
         """
-        self.rapport = f"L'entretien demandé par le client est fait."
+        self.rapport = "L'entretien demandé par le client est fait."
         return self.rapport

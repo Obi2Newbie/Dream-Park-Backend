@@ -3,37 +3,46 @@ from datetime import date
 
 class Placement:
     """
-    Représente le placement d'un véhicule dans une place de parking DreamPark.
+    Représente le stationnement effectif d'un véhicule dans une place.
 
-    Attributs :
-        dateDebut (date) : Date à laquelle le véhicule a été garé.
-        dateFin (date) : Date prévue ou réelle de départ du véhicule.
-        estEnCours (bool) : Indique si le placement est actuellement actif.
-        maPlace (Place) : Référence vers la place occupée par ce placement.
+    Lie un véhicule à une place spécifique avec traçabilité temporelle
+    (dates d'entrée et sortie). Fait le lien entre Voiture et Place.
+
+    Attributes:
+        dateDebut (date): Date et heure d'entrée du véhicule.
+        dateFin (date): Date et heure de sortie (None si encore garé).
+        estEnCours (bool): True si le véhicule est encore dans la place.
+        maPlace (Place): Référence vers la place occupée.
     """
 
     def __init__(self, dateDebut, dateFin=None, estEnCours=True):
         """
-        Initialise un nouveau placement pour un véhicule dans le parking.
+        Initialise un nouveau placement.
 
         Args:
-            dateDebut (date) : Date à laquelle le véhicule est entré dans le parking.
-            dateFin (date, optionnel) : Date prévue ou réelle de sortie (par défaut None).
-            estEnCours (bool, optionnel) : True si le véhicule est toujours garé (par défaut True).
+            dateDebut (date): Date d'entrée du véhicule.
+            dateFin (date, optional): Date de sortie prévue. Defaults to None.
+            estEnCours (bool, optional): Statut actif. Defaults to True.
         """
         self.dateDebut = dateDebut
         self.dateFin = dateFin
         self.estEnCours = estEnCours
-        self.maPlace = None  # Référence vers la place occupée
+        self.maPlace = None
 
     def partirPlace(self):
         """
-        Termine le placement actuel lorsque le véhicule quitte le parking.
-        Libère également la place associée.
+        Termine le placement et libère automatiquement la place associée.
+
+        Appelé lors de la sortie du véhicule pour mettre à jour tous
+        les états (placement terminé + place libérée).
+
+        Side Effects:
+            - Désactive le placement (estEnCours = False)
+            - Enregistre la date de sortie
+            - Libère automatiquement la place (maPlace.definir_estLibre(True))
         """
         self.estEnCours = False
         self.dateFin = date.today()
 
-        # Libérer la place si elle existe
         if self.maPlace:
             self.maPlace.definir_estLibre(True)

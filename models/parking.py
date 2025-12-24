@@ -1,35 +1,56 @@
 from .place import Place
+
+
 class Parking:
     """
-    Représente le parking principal du système DreamPark.
+    Représente le parking central du système DreamPark (Singleton).
 
-    Attributs :
-        __nbPlacesParNiveau (int) : Nombre total de places disponibles à chaque niveau du parking.
-        __nbPlacesLibres (int) : Nombre de places actuellement libres dans le parking.
-        __prix (float) : Tarif de stationnement appliqué aux utilisateurs non abonnés.
-        nbNiveau (int) : Nombre total de niveaux ou d’étages dans le parking.
+    Cette classe gère l'ensemble du parking multi-niveaux, incluant :
+    - La gestion des places disponibles
+    - Les abonnements clients
+    - La tarification
+    - Les points d'accès
+
+    Implémente le pattern Singleton pour garantir une instance unique.
+
+    Attributes:
+        __nbPlacesParNiveau (int): Capacité par niveau du parking.
+        __nbPlacesLibres (int): Nombre actuel de places disponibles.
+        __prix (float): Tarif horaire de base en euros.
+        nBNiveau (int): Nombre total de niveaux dans le parking.
+        mesPlaces (list): Liste de toutes les places du parking.
+        mesAbonnements (list): Liste des abonnements gérés.
+        acces1 (Acces): Premier point d'accès (entrée Nord).
+        acces2 (Acces): Second point d'accès (sortie Sud).
     """
+
     __instance = None
 
     def __new__(cls, *args, **kwargs):
+        """
+        Implémente le pattern Singleton.
+
+        Garantit qu'une seule instance de Parking existe dans l'application.
+
+        Returns:
+            Parking: L'instance unique du parking.
+        """
         if cls.__instance is None:
             cls.__instance = super(Parking, cls).__new__(cls)
         return cls.__instance
 
     def __init__(self, nbPlacesParNiveau, nbPlacesLibres, prix, nBNiveau):
         """
-        Initialise un objet Parking avec ses capacités principales.
+        Initialise le parking avec sa configuration de base.
 
         Args:
-            nbPlacesParNiveau (int) : Nombre de places disponibles par niveau.
-            nbPlacesLibres (int) : Nombre de places libres au moment de l’initialisation.
-            __prix (float) : Tarif de stationnement appliqué aux utilisateurs non abonnés.
-            nbNiveau (int) : Nombre total de niveaux ou d’étages dans le parking.
+            nbPlacesParNiveau (int): Nombre de places par niveau.
+            nbPlacesLibres (int): Nombre initial de places libres.
+            prix (float): Tarif de base en euros.
+            nBNiveau (int): Nombre de niveaux du parking.
 
-        Comportement attendu:
-            - Définit la capacité du parking.
-            - Initialise le nombre de places libres.
-            - Prépare l’objet à la gestion des véhicules et des abonnements.
+        Note:
+            N'initialise qu'une seule fois grâce au flag 'initialized'.
         """
         if not hasattr(self, 'initialized'):
             self.__nbPlacesParNiveau = nbPlacesParNiveau
@@ -44,38 +65,43 @@ class Parking:
 
     def rechercherPlace(self, v):
         """
-        Recherche une place adaptée pour un véhicule donné.
+        Recherche une place adaptée aux dimensions d'un véhicule.
+
+        Parcourt les places disponibles et sélectionne la première
+        place libre dont les dimensions sont compatibles avec le véhicule.
 
         Args:
-            v (voiture): Objet représentant le véhicule cherchant à se garer.
+            v (Voiture): Le véhicule cherchant une place.
 
         Returns:
-            Place: L’objet représentant la place attribuée au véhicule.
+            Place: La première place compatible trouvée, ou None si aucune
+                   place n'est disponible ou compatible.
 
-        Comportement attendu :
-            - Évalue les dimensions du véhicule et trouve une place compatible.
-            - Prend en compte la hauteur et la longueur maximales autorisées.
-            - Met à jour l’état des places disponibles.
+        Algorithm:
+            Vérifie pour chaque place :
+            1. Est-elle libre ?
+            2. Sa hauteur >= hauteur du véhicule ?
+            3. Sa longueur >= longueur du véhicule ?
         """
         for place in self.mesPlaces:
-            if place.obtenir_estLibre() and place.obtenir_hauteur() >= v.obtenirHauteur() and place.obtenir_longueur() >= v.obtenirLongueur():
+            if (place.obtenir_estLibre() and
+                    place.obtenir_hauteur() >= v.obtenirHauteur() and
+                    place.obtenir_longueur() >= v.obtenirLongueur()):
                 return place
         return None
 
     def nbPlacesLibresParNiveau(self, niveau):
         """
-        Calcule et retourne le nombre de places libres pour un niveau spécifique.
+        Calcule le nombre de places libres pour un niveau spécifique.
 
         Args:
-            niveau (str): Identifiant ou nom du niveau.
+            niveau (str): Identifiant du niveau (ex: "A", "B", "C").
 
         Returns:
-            int: Nombre de places libres à ce niveau.
+            int: Nombre de places libres dans ce niveau.
 
-        Comportement attendu :
-            - Parcourt les places associées au niveau indiqué.
-            - Compte uniquement celles marquées comme libres.
-            - Peut être utilisé pour afficher des informations sur les panneaux d’entrée.
+        Side Effects:
+            Met à jour l'attribut privé __nbPlacesLibres.
         """
         placeLibre = 0
         for p in self.mesPlaces:
@@ -83,19 +109,25 @@ class Parking:
                 placeLibre += 1
         self.__nbPlacesLibres = placeLibre
         return placeLibre
+
     def addAbonnement(self, ab):
         """
-        Ajoute un abonnement au système de gestion du parking.
+        Enregistre un nouvel abonnement dans le système du parking.
 
         Args:
-            ab (Abonnement): Objet représentant l’abonnement à enregistrer.
+            ab (Abonnement): L'abonnement à ajouter.
 
-        Comportement attendu :
-            - Enregistre l’abonnement dans le système de gestion.
-            - Peut ajuster les statistiques liées aux abonnés.
-            - Sert à gérer les droits ou tarifs spécifiques des clients abonnés.
+        Note:
+            Permet de suivre tous les abonnements actifs pour statistiques
+            et gestion de la clientèle.
         """
         self.mesAbonnements.append(ab)
 
     def obtenirPrix(self):
+        """
+        Retourne le tarif de base du parking.
+
+        Returns:
+            float: Tarif horaire en euros.
+        """
         return self.__prix

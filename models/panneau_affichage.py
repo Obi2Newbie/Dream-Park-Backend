@@ -1,24 +1,20 @@
 class Panneau_affichage:
     """
-    Représente un panneau d’affichage du système DreamPark.
+    Représente un panneau d'information dynamique du parking DreamPark.
 
-    Ce panneau sert à informer les clients sur l’état du parking,
-    notamment le nombre de places disponibles ou les messages d’accès.
+    Affichage électronique situé aux entrées pour informer les clients
+    en temps réel sur l'état du parking (places disponibles, niveaux
+    complets, messages d'orientation).
     """
+
     def afficherNbPlacesDisponibles(self, p):
         """
-        Affiche sur le panneau le nombre de places actuellement disponibles
-        dans le parking spécifié.
+        Affiche le nombre de places actuellement libres dans le parking.
 
         Args:
-            p (Parking): Objet représentant le parking dont on veut afficher l’état.
+            p (Parking): Le parking dont on veut afficher l'état.
 
         Returns:
-            string: Message affiché sur le panneau, indiquant le nombre de places libres.
-
-        Comportement attendu :
-            - Récupère les données du parking via l’objet `p`.
-            - Met à jour l’affichage visuel pour informer les clients.
-            - Peut afficher des messages spéciaux si le parking est complet ou réservé.
+            str: Message formaté indiquant le nombre de places disponibles.
         """
         return f"Places libres: {p.NbPlacesDisponibles()}"

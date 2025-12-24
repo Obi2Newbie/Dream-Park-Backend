@@ -1,58 +1,48 @@
 class Camera:
     """
-    Représente une caméra du système DreamPark, utilisée pour capturer
-    les informations d’un véhicule entrant ou sortant du parking.
+    Représente une caméra de reconnaissance du système DreamPark.
 
-    Les caméras sont généralement placées aux accès afin de mesurer
-    les dimensions du véhicule et d’identifier son immatriculation.
+    Équipement de surveillance et d'identification installé aux accès
+    du parking pour capturer automatiquement les caractéristiques
+    physiques des véhicules (dimensions, immatriculation).
+
+    Note:
+        Dans cette implémentation, la caméra lit les données déjà
+        présentes dans l'objet Voiture (simulation).
     """
+
     def capturerHauteur(self, v):
         """
-        Capture et renvoie la hauteur du véhicule.
+        Mesure la hauteur d'un véhicule.
 
         Args:
-            v (Voiture): Objet représentant le véhicule à analyser.
+            v (Voiture): Le véhicule à analyser.
 
         Returns:
-            float: Valeur mesurée correspondant à la hauteur du véhicule (en mètres).
-
-        Comportement attendu :
-            - Mesure la hauteur du véhicule à l’aide des capteurs ou de la caméra.
-            - Met à jour l’objet `Voiture` avec la hauteur capturée.
-            - Peut enregistrer la donnée pour le contrôle de compatibilité avec les places disponibles.
+            float: Hauteur du véhicule en mètres.
         """
         return v.obtenirHauteur()
 
     def capturerLongueur(self, v):
         """
-        Capture et renvoie la longueur du véhicule.
+        Mesure la longueur d'un véhicule.
 
         Args:
-            v (Voiture): Objet représentant le véhicule à analyser.
+            v (Voiture): Le véhicule à analyser.
 
         Returns:
-            float: Valeur mesurée correspondant à la longueur du véhicule (en mètres).
-
-        Comportement attendu :
-            - Mesure la longueur du véhicule grâce à la caméra ou à un capteur dédié.
-            - Met à jour l’objet `Voiture` avec la longueur détectée.
-            - Peut être utilisé pour déterminer si le véhicule peut entrer dans une place donnée.
+            float: Longueur du véhicule en mètres.
         """
         return v.obtenirLongueur()
 
     def capturerImmatr(self, v):
         """
-        Capture l’immatriculation du véhicule à partir de la caméra.
+        Lit et reconnaît la plaque d'immatriculation d'un véhicule.
 
         Args:
-            v (Voiture): Objet représentant le véhicule à identifier.
+            v (Voiture): Le véhicule à identifier.
 
         Returns:
-            string: Numéro d’immatriculation détecté.
-
-        Comportement attendu :
-            - Détecte et lit la plaque d’immatriculation du véhicule via reconnaissance optique.
-            - Met à jour l’objet `Voiture` avec le numéro d’immatriculation.
-            - Sert à vérifier la correspondance avec un client ou un abonnement enregistré.
+            str: Numéro d'immatriculation détecté.
         """
         return v.obtenirImmatriculation()
