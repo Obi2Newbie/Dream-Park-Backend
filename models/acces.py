@@ -5,24 +5,27 @@ from .livraison import Livraison
 from .entretien import Entretien
 import time
 from datetime import datetime
+
+
 class Acces:
     """
     Représente un accès du parking DreamPark, permettant la gestion
     des entrées et des sorties des véhicules et des clients.
 
     Cette classe regroupe les fonctionnalités liées à :
-        - L’activation des caméras à l’entrée ou à la sortie.
-        - L’affichage des informations sur les panneaux.
-        - Le déclenchement des procédures d’entrée pour les clients.
+        - L'activation des caméras à l'entrée ou à la sortie.
+        - L'affichage des informations sur les panneaux.
+        - Le déclenchement des procédures d'entrée pour les clients.
     """
+
     def __init__(self, camera, borne, panneau, tel_entree, tel_sortie, parking):
         """
         Initialise un objet `acces`.
 
         Comportement attendu :
-            - Prépare l’accès à être utilisé pour la gestion des entrées et sorties.
-            - Peut initialiser les composants associés tels que la caméra et le panneau d’affichage.
-            - Les détails d’initialisation (ex. numéro d’accès, position, type) seront définis ultérieurement.
+            - Prépare l'accès à être utilisé pour la gestion des entrées et sorties.
+            - Peut initialiser les composants associés tels que la caméra et le panneau d'affichage.
+            - Les détails d'initialisation (ex. numéro d'accès, position, type) seront définis ultérieurement.
         """
         self.MonParking = parking
         self.TelEntree = tel_entree
@@ -39,38 +42,40 @@ class Acces:
             c (Client): Objet représentant le client entrant ou sortant.
 
         Returns:
-            Voiture: Objet contenant les informations capturées sur le véhicule.
+            Voiture: L'objet Voiture du client (pas une nouvelle instance).
 
         Comportement attendu :
-            - Déclenche la caméra pour capturer la plaque d’immatriculation et les dimensions du véhicule.
-            - Crée ou met à jour un objet `Voiture` lié au client.
-            - Peut être utilisé au moment de l’entrée pour attribuer une place de parking.
+            - Déclenche la caméra pour capturer la plaque d'immatriculation et les dimensions du véhicule.
+            - Retourne la voiture existante du client.
+            - Peut être utilisé au moment de l'entrée pour attribuer une place de parking.
         """
         if c.maVoiture:
+            # On utilise la voiture existante du client, pas une nouvelle
             vHauteur = self.maCamera.capturerHauteur(c.maVoiture)
             vLongueur = self.maCamera.capturerLongueur(c.maVoiture)
             vImma = self.maCamera.capturerImmatr(c.maVoiture)
-            voiture = Voiture(vHauteur, vLongueur, vImma)
-            return voiture
+
+            # Retourner la voiture existante, pas en créer une nouvelle
+            return c.maVoiture
         return None
 
     def actionnerPanneau(self):
         """
-        Active le panneau d’affichage situé à l’accès.
+        Active le panneau d'affichage situé à l'accès.
 
         Returns:
             String: Message affiché sur le panneau (par exemple, le nombre de places disponibles).
 
         Comportement attendu :
             - Affiche des informations dynamiques (places libres, niveau complet, etc.).
-            - Sert d’interface visuelle pour les clients à l’entrée et à la sortie.
+            - Sert d'interface visuelle pour les clients à l'entrée et à la sortie.
         """
         if self.MonParking and self.monPanneau:
             return self.monPanneau.afficherNbPlacesDisponibles()
 
     def lancerProcedureEntree(self, c):
         """
-        Lance la procédure d’entrée complète pour un client.
+        Lance la procédure d'entrée complète pour un client.
         Gère désormais la priorité pour les Super Abonnés (Pack Garanti).
 
         Args:
@@ -80,10 +85,11 @@ class Acces:
             string: Message indiquant le résultat de la procédure.
         """
         # 1. Identification du véhicule via la caméra
-        # Note : actionnerCamera crée ou met à jour l'objet Voiture
+        # Note : actionnerCamera retourne maintenant la voiture existante du client
         voiture = self.actionnerCamera(c)
         statut = self.maBorne.recupererInfosCarte(c)
         print(statut)
+
         # 2. Recherche d'une place physique dans le parking
         placeAssignee = self.MonParking.rechercherPlace(voiture)
 
