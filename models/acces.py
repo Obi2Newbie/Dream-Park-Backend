@@ -87,7 +87,6 @@ class Acces:
         # 2. Recherche d'une place physique dans le parking
         placeAssignee = self.MonParking.rechercherPlace(voiture)
 
-
         if c.estSuperAbonne:
             message = self.TelEntree.teleporterVoitureSuperAbonne(voiture)
             return f"Bienvenue {c.nom}. {message}"
@@ -98,15 +97,20 @@ class Acces:
                 temp = input("Est vous un abonné ? y/n\n").lower()
                 if temp in ["y", "n"]:
                     break
+                print("Erreur! Veillez sélectionner que 'y' ou 'n'")
             print("Vérification de votre statut client... Veillez patienter...")
             time.sleep(1)
             if not c.estAbonne:
+                print("Retour système: Client non Abonné...")
                 self.maBorne.proposerTypePaiement()
                 self.maBorne.proposerAbonnements(c, self.MonParking)
                 print(self.maBorne.deliverTicket(c))
-                return f"Bienvenue {c.nom}"
+                self.TelEntree.teleporterVoiture(voiture, placeAssignee)
+                placeAssignee.definir_estLibre(False)
+                return f"Bienvenue {c.nom}. Place assignée : {placeAssignee.obtenir_niveau()}{placeAssignee.numero}"
 
             # Téléportation standard
+            print("Retour système: Client est un abonné")
             service = self.maBorne.proposerServices()
             print("Service est ", service)
             match service:
@@ -139,7 +143,7 @@ class Acces:
                     c.demanderLivraison(date_liv, heure_liv, adresse_liv)
                 case "4":
                     print(">> Aucun service supplémentaire sélectionné.")
-
+            print(self.maBorne.deliverTicket(c))
             self.TelEntree.teleporterVoiture(voiture, placeAssignee)
             placeAssignee.definir_estLibre(False)
             return f"Bienvenue {c.nom}. Place assignée : {placeAssignee.obtenir_niveau()}{placeAssignee.numero}"
