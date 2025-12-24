@@ -1,45 +1,41 @@
 import unittest
-from datetime import datetime, timedelta
-from models.contrat import Contrat
-from models.abonnement import Abonnement
-
+from datetime import date, timedelta
+from models import Contrat
 
 class TestContrat(unittest.TestCase):
-    """Tests pour la classe Contrat"""
+    """Tests unitaires pour la gestion des contrats."""
 
-    def test_creation_contrat(self):
-        """Test: Creation d'un contrat"""
-        date_debut = datetime.now()
-        contrat = Contrat(date_debut, 30)
+    def setUp(self):
+        """Configuration initiale pour les tests."""
+        self.date_debut = date.today()
+        # Date de fin prévue dans un an
+        self.date_fin = self.date_debut + timedelta(days=365)
+        self.contrat = Contrat(self.date_debut, self.date_fin, True)
 
-        self.assertEqual(contrat.date_debut, date_debut)
-        self.assertEqual(contrat.duree_jours, 30)
-        self.assertIsNotNone(contrat.date_fin)
+    def test_initialisation(self):
+        """Vérifie la création d’un contrat avec ses attributs."""
+        self.assertEqual(self.contrat.dateDebut, self.date_debut)
+        self.assertEqual(self.contrat.dateFin, self.date_fin)
+        self.assertTrue(self.contrat.estEnCours)
+        self.assertIsNone(self.contrat.monAbonnement)
 
-    def test_contrat_valide(self):
-        """Test: Un contrat recent est valide"""
-        contrat = Contrat(datetime.now(), 30)
-        self.assertTrue(contrat.estValide())
+    def test_rompre_contrat(self):
+        """Teste la résiliation d’un contrat."""
+        # Action : Rompre le contrat
+        self.contrat.rompreContract()
 
-    def test_contrat_expire(self):
-        """Test: Un contrat expire est invalide"""
-        date_passee = datetime.now() - timedelta(days=60)
-        contrat = Contrat(date_passee, 30)
-        self.assertFalse(contrat.estValide())
+        # Vérifications
+        self.assertFalse(self.contrat.estEnCours)
+        # Selon votre code, rompreContract met la date de DEBUT à aujourd'hui
+        self.assertEqual(self.contrat.dateDebut, date.today())
 
-    def test_jours_restants(self):
-        """Test: Calcul des jours restants"""
-        contrat = Contrat(datetime.now(), 30)
-        jours = contrat.jours_restants()
-        self.assertGreater(jours, 0)
-        self.assertLessEqual(jours, 30)
+    def test_assignation_abonnement(self):
+        """Vérifie que l'on peut associer un objet abonnement au contrat."""
 
-    def test_jours_restants_contrat_expire(self):
-        """Test: Jours restants pour un contrat expire"""
-        date_passee = datetime.now() - timedelta(days=60)
-        contrat = Contrat(date_passee, 30)
-        self.assertEqual(contrat.jours_restants(), 0)
+        # Simulation d'un objet abonnement (Mock simple)
+        class MockAbonnement: pass
 
+        mon_abo = MockAbonnement()
 
-if __name__ == '__main__':
-    unittest.main()
+        self.contrat.monAbonnement = mon_abo
+        self.assertEqual(self.contrat.monAbonnement, mon_abo)

@@ -8,7 +8,7 @@ class Livraison(Service):
     qu’il s’agisse d’un service classique ou d’un avantage réservé
     aux abonnés premium.
     """
-    def __init__(self, dateDemande, adresse, heure):
+    def __init__(self, dateDemande, heure, adresse):
         super().__init__(dateDemande, None,"Livraison non effectué")
         self.adresse = adresse
         self.heure = heure
