@@ -1,179 +1,74 @@
 import unittest
-from datetime import datetime, timedelta
-from unittest.mock import Mock, patch
-from models.borne_ticket import BorneTicket, Ticket
-from models.client import Client
-from models.voiture import Voiture
+from unittest.mock import MagicMock, patch
+from models import Borne_ticket
 
 class TestBorneTicket(unittest.TestCase):
-    """Tests pour la classe BorneTicket"""
+    """Tests pour la borne de tickets et paiements."""
 
     def setUp(self):
-        """Initialisation avant chaque test"""
-        self.mock_acces = Mock()
-        self.borne = BorneTicket(id_borne=1, acces=self.mock_acces)
+        """Configuration initiale pour les tests."""
+        self.borne = Borne_ticket()
 
-        self.client_non_abonne = Client("Dupont", "10 rue Test", False, False, 0)
-        self.client_non_abonne.voiture = Voiture(1.80, 4.20, "AB-123-CD")
+        # Mock du client et de sa voiture
+        self.mock_client = MagicMock()
+        self.mock_client.nom = "Alice"
+        self.mock_voiture = MagicMock()
+        self.mock_voiture.obtenirImmatriculation.return_value = "AA-123-BB"
+        self.mock_client.maVoiture = self.mock_voiture
 
-        self.client_abonne = Client("Martin", "20 rue Test", True, False, 5)
-        self.client_abonne.voiture = Voiture(1.80, 4.20, "XY-789-ZZ")
+        # Mock du parking
+        self.mock_parking = MagicMock()
 
-    def test_initialisation_borne(self):
-        """Verifie la creation d'une borne"""
-        self.assertEqual(self.borne.id_borne, 1)
-        self.assertIsNotNone(self.borne.abonnements_disponibles)
-        self.assertIsNotNone(self.borne.services_disponibles)
-        self.assertEqual(len(self.borne.abonnements_disponibles), 3)
-        self.assertEqual(len(self.borne.services_disponibles), 3)
+    def test_deliver_ticket(self):
+        """Teste la génération d’un ticket pour un client."""
+        resultat = self.borne.deliverTicket(self.mock_client)
+        self.assertEqual(resultat, "Alice-AA-123-BB")
 
-    def test_traiter_client_abonne(self):
-        """Teste le traitement d'un client abonne"""
-        with patch.object(self.borne, '_demander_choix_service', return_value=None):
-            self.borne._traiter_client_abonne(self.client_abonne)
-        self.assertTrue(True)
+    @patch('builtins.input', return_value="1")
+    def test_proposer_services(self, mock_input):
+        """Vérifie la sélection d'un service (Maintenance)."""
+        resultat = self.borne.proposerServices()
+        self.assertEqual(resultat, "1")
+        self.assertEqual(mock_input.call_count, 1)
 
-    def test_traiter_client_non_abonne(self):
-        """Teste le traitement d'un client non-abonne"""
-        with patch.object(self.borne, '_demander_mode_paiement', return_value="CB"), \
-                patch.object(self.borne, '_demander_choix_abonnement', return_value=None):
-            self.borne._traiter_client_non_abonne(self.client_non_abonne)
+    @patch('builtins.input', return_value="2")
+    def test_proposer_abonnements_super(self, mock_input):
+        """Teste la souscription à l'abonnement Super Abonné."""
+        self.borne.proposerAbonnements(self.mock_client, self.mock_parking)
 
-        self.assertEqual(self.client_non_abonne.mode_paiement, "CB")
+        # Vérification des changements d'état sur le client
+        self.assertTrue(self.mock_client.estAbonne)
+        self.assertTrue(self.mock_client.estSuperAbonne)
 
-    def test_traiter_client_non_abonne_souscrit_abonnement(self):
-        """Teste la souscription d'un abonnement"""
-        abonnement = ("Mensuel Standard", 50.0, False)
+        # Vérifie que les méthodes d'enregistrement ont été appelées
+        self.mock_client.sAbonner.assert_called_once()
+        self.mock_parking.addAbonnement.assert_called_once()
 
-        with patch.object(self.borne, '_demander_mode_paiement', return_value="CB"), \
-                patch.object(self.borne, '_demander_choix_abonnement', return_value=abonnement):
-            self.borne._traiter_client_non_abonne(self.client_non_abonne)
+    @patch('builtins.input', return_value="y")
+    @patch('time.sleep', return_value=None)  # Pour ne pas attendre 1s
+    def test_recuperer_infos_carte_succes(self, mock_sleep, mock_input):
+        """Teste la validation de carte pour un super abonné."""
+        self.mock_client.estSuperAbonne = True
 
-        self.assertEqual(self.client_non_abonne.mode_paiement, "CB")
+        resultat = self.borne.recupererInfosCarte(self.mock_client)
+        self.assertEqual(resultat, "Carte validée pour Alice")
 
-    def test_delivrer_ticket_succes(self):
-        """Teste la delivrance d'un ticket avec succes"""
-        ticket = self.borne._delivrer_ticket(self.client_non_abonne, 42)
+    @patch('builtins.input', return_value="n")
+    @patch('time.sleep', return_value=None)
+    def test_recuperer_infos_carte_echec(self, mock_sleep, mock_input):
+        """Teste le retour si le client n'est pas reconnu comme super abonné."""
+        self.mock_client.estSuperAbonne = False
 
-        self.assertIsNotNone(ticket)
-        self.assertEqual(ticket.client, self.client_non_abonne)
-        self.assertEqual(ticket.id_place, 42)
-        self.assertIsNotNone(ticket.heure_entree)
-        self.assertTrue(ticket.numero_ticket.startswith("TK"))
+        resultat = self.borne.recupererInfosCarte(self.mock_client)
+        self.assertEqual(resultat, "Client non super abonné")
 
-    def test_actionner_teleporteur_succes(self):
-        """Teste l'activation du teleporteur avec succes"""
-        ticket = Ticket(self.client_non_abonne, 42, datetime.now())
-
-        mock_teleporteur = Mock()
-        mock_teleporteur.teleporterEntree.return_value = True
-        self.mock_acces.obtenirTeleporteurDisponible.return_value = mock_teleporteur
-
-        succes = self.borne._actionner_teleporteur(ticket)
-
-        self.assertTrue(succes)
-        mock_teleporteur.teleporterEntree.assert_called_once()
-
-    def test_actionner_teleporteur_aucun_disponible(self):
-        """Teste l'echec si aucun teleporteur disponible"""
-        ticket = Ticket(self.client_non_abonne, 42, datetime.now())
-        self.mock_acces.obtenirTeleporteurDisponible.return_value = None
-
-        succes = self.borne._actionner_teleporteur(ticket)
-
-        self.assertFalse(succes)
-
-    def test_traiter_stationnement_complet_client_abonne(self):
-        """Test d'integration: Traitement complet pour client abonne"""
-        mock_teleporteur = Mock()
-        mock_teleporteur.teleporterEntree.return_value = True
-        self.mock_acces.obtenirTeleporteurDisponible.return_value = mock_teleporteur
-
-        with patch.object(self.borne, '_demander_choix_service', return_value=None):
-            ticket = self.borne.traiter_stationnement(self.client_abonne, 42)
-
-        self.assertIsNotNone(ticket)
-        self.assertEqual(ticket.id_place, 42)
-        mock_teleporteur.teleporterEntree.assert_called_once()
-
-    def test_traiter_stationnement_complet_client_non_abonne(self):
-        """Test d'integration: Traitement complet pour client non-abonne"""
-        mock_teleporteur = Mock()
-        mock_teleporteur.teleporterEntree.return_value = True
-        self.mock_acces.obtenirTeleporteurDisponible.return_value = mock_teleporteur
-
-        with patch.object(self.borne, '_demander_mode_paiement', return_value="CB"), \
-                patch.object(self.borne, '_demander_choix_abonnement', return_value=None):
-            ticket = self.borne.traiter_stationnement(self.client_non_abonne, 42)
-
-        self.assertIsNotNone(ticket)
-        self.assertEqual(self.client_non_abonne.mode_paiement, "CB")
-        mock_teleporteur.teleporterEntree.assert_called_once()
-
-    def test_traiter_stationnement_echec_teleportation(self):
-        """Teste l'echec si la teleportation echoue"""
-        mock_teleporteur = Mock()
-        mock_teleporteur.teleporterEntree.return_value = False
-        self.mock_acces.obtenirTeleporteurDisponible.return_value = mock_teleporteur
-
-        with patch.object(self.borne, '_demander_choix_service', return_value=None):
-            ticket = self.borne.traiter_stationnement(self.client_abonne, 42)
-
-        self.assertIsNone(ticket)
-
-
-class TestTicket(unittest.TestCase):
-    """Tests pour la classe Ticket"""
-
-    def setUp(self):
-        """Initialisation avant chaque test"""
-        self.client = Client("Dupont", "10 rue Test", False, False, 0)
-        self.client.voiture = Voiture(1.80, 4.20, "AB-123-CD")
-        self.heure_entree = datetime.now()
-
-    def test_creation_ticket(self):
-        """Teste la creation d'un ticket"""
-        ticket = Ticket(self.client, 42, self.heure_entree)
-
-        self.assertIsNotNone(ticket.numero_ticket)
-        self.assertTrue(ticket.numero_ticket.startswith("TK"))
-        self.assertEqual(ticket.client, self.client)
-        self.assertEqual(ticket.id_place, 42)
-        self.assertFalse(ticket.paye)
-
-    def test_calcul_duree(self):
-        """Teste le calcul de la duree de stationnement"""
-        ticket = Ticket(self.client, 42, self.heure_entree)
-        ticket.heure_sortie = self.heure_entree + timedelta(hours=2)
-
-        duree = ticket.calculer_duree()
-        self.assertEqual(duree, 120)
-
-    def test_calcul_montant_non_abonne(self):
-        """Teste le calcul du montant pour un non-abonne"""
-        ticket = Ticket(self.client, 42, self.heure_entree)
-        ticket.heure_sortie = self.heure_entree + timedelta(hours=2)
-
-        montant = ticket.calculer_montant(tarif_horaire=2.0)
-        self.assertEqual(montant, 4.0)
-
-    def test_calcul_montant_abonne_gratuit(self):
-        """Teste le montant gratuit pour un abonne"""
-        client_abonne = Client("Martin", "20 rue Test", True, False, 5)
-        client_abonne.voiture = Voiture(1.80, 4.20, "XY-789-ZZ")
-
-        ticket = Ticket(client_abonne, 42, self.heure_entree)
-        ticket.heure_sortie = self.heure_entree + timedelta(hours=2)
-
-        montant = ticket.calculer_montant()
-        self.assertEqual(montant, 0.0)
-
-    def test_marquer_paye(self):
-        """Teste le marquage d'un ticket comme paye"""
-        ticket = Ticket(self.client, 42, self.heure_entree)
-        ticket.marquer_paye()
-        self.assertTrue(ticket.paye)
-
-
-if __name__ == '__main__':
-    unittest.main()
+    @patch('builtins.input', side_effect=["3", "1"])  # Test d'une erreur puis succès
+    def test_proposer_type_paiement(self, mock_input):
+        """Vérifie la sélection du paiement par CB après un mauvais choix."""
+        # On ne vérifie pas le print, mais on s'assure que la boucle se termine
+        with patch('builtins.print') as mock_print:
+            self.borne.proposerTypePaiement()
+            # Vérifie que le message d'erreur a été affiché pour le choix "3"
+            mock_print.assert_any_call("Erreur : Veuillez appuyer sur le bon bouton.")
+            # Vérifie que le succès a été affiché pour le choix "1"
+            mock_print.assert_any_call("Merci pour avoir sélectionné l'option CB")
