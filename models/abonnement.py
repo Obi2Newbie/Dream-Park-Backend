@@ -1,25 +1,27 @@
 class Abonnement:
     """
-    Représente un type d’abonnement proposé par le système DreamPark.
+    Représente un type d'abonnement proposé par le système DreamPark.
 
-    Attributs :
-        libelle (str) : Nom ou désignation de l’abonnement.
-        prix (float) : Coût de l’abonnement, généralement exprimé en euros.
-        estPackGar (bool) : Indique si cet abonnement inclut le pack garanti.
+    Un abonnement définit les privilèges tarifaires et les services auxquels
+    un client a accès dans le parking (téléportation prioritaire, services
+    additionnels, etc.).
+
+    Attributes:
+        libelle (str): Nom ou désignation de l'abonnement (ex: "Standard", "Premium").
+        prix (float): Coût mensuel de l'abonnement en euros.
+        estPackGar (bool): True si l'abonnement inclut le pack garanti (Super Abonné)
+                           avec téléportation prioritaire et service Valet.
+        mesAbonnements (list): Liste des contrats associés à cet abonnement.
     """
 
     def __init__(self, libelle, prix, estPackGar):
         """
-        Initialise un nouvel abonnement avec ses caractéristiques principales.
+        Initialise un nouvel abonnement avec ses caractéristiques.
 
         Args:
-            libelle (str): Nom de l’abonnement.
-            prix (float): Montant de l’abonnement.
-            estPackGar (bool): True si l’abonnement comprend le pack garanti, False sinon.
-
-        Comportement attendu :
-            - Enregistre les informations de base liées à l’abonnement.
-            - Prépare l’objet pour être associé à un contrat ou un client.
+            libelle (str): Nom de l'abonnement.
+            prix (float): Montant mensuel de l'abonnement.
+            estPackGar (bool): True si l'abonnement comprend le pack garanti.
         """
         self.libelle = libelle
         self.prix = float(prix)
@@ -30,13 +32,14 @@ class Abonnement:
         """
         Associe un contrat à cet abonnement.
 
-        Args:
-            contrat (Contrat): Objet représentant le contrat lié à cet abonnement.
+        Permet de lier un client à cet abonnement via un contrat qui
+        définit la durée et le statut de la souscription.
 
-        Comportement attendu :
-            - Lie le contrat fourni à cet abonnement.
-            - Permet de suivre la durée et le statut de l’abonnement.
-            - Peut servir à gérer les renouvellements ou résiliations.
+        Args:
+            contrat (Contrat): Le contrat à associer à cet abonnement.
+
+        Note:
+            Évite les doublons en vérifiant si le contrat n'est pas déjà présent.
         """
         if contrat not in self.mesAbonnements:
             self.mesAbonnements.append(contrat)

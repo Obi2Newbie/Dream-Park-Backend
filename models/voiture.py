@@ -1,27 +1,31 @@
 from .placement import Placement
 
+
 class Voiture:
     """
-    Représente une voiture gérée par le système DreamPark.
+    Représente un véhicule géré par le système DreamPark.
 
-    Attributs :
-        __hauteur (float) : Hauteur du véhicule en mètres.
-        __longueur (float) : Longueur du véhicule en mètres.
-        __immatriculation (str) : Numéro d'immatriculation du véhicule.
-        estDansParking (bool) : Indique si le véhicule est actuellement stationné dans le parking.
+    Stocke les caractéristiques physiques du véhicule et son état
+    de stationnement actuel (dans/hors parking, placement associé).
+
+    Attributes:
+        __hauteur (float): Hauteur du véhicule en mètres (privé).
+        __longueur (float): Longueur du véhicule en mètres (privé).
+        __immatriculation (str): Plaque d'immatriculation (privé).
+        estDansParking (bool): True si le véhicule est actuellement garé.
+        proprietaire (Client): Client propriétaire du véhicule.
+        monPlacement (Placement): Placement actif si véhicule garé.
     """
 
-    def __init__(self, hauteur, longueur, immatriculation, estDansParking = False):
+    def __init__(self, hauteur, longueur, immatriculation, estDansParking=False):
         """
-        Initialise une nouvelle voiture avec ses caractéristiques physiques
-        et son statut de stationnement.
+        Initialise un nouveau véhicule.
 
-        Attributs:
-            __hauteur (float): Hauteur du véhicule en mètres.
-            __longueur (float): Longueur du véhicule en mètres.
-            __immatriculation (str): Numéro d'immatriculation du véhicule.
-            estDansParking (bool, optionnel): True si le véhicule est déjà stationné
-                dans le parking (par défaut False).
+        Args:
+            hauteur (float): Hauteur en mètres.
+            longueur (float): Longueur en mètres.
+            immatriculation (str): Numéro de plaque.
+            estDansParking (bool, optional): Statut initial. Defaults to False.
         """
         self.__hauteur = float(hauteur)
         self.__longueur = float(longueur)
@@ -32,95 +36,53 @@ class Voiture:
 
     def addPlacementV(self, p):
         """
-        Associe un objet `Placement` à cette voiture, indiquant
-        l’endroit précis où elle est garée dans le parking.
+        Associe un placement à ce véhicule lors du stationnement.
 
-        Attributs:
-            p: Objet représentant la place attribuée à la voiture.
+        Args:
+            p (Placement): Le placement créé lors de l'entrée au parking.
 
-        Comportement attendu :
-            - Enregistre la place dans laquelle le véhicule est garé.
-            - Met à jour l’attribut `estDansParking` à True.
-            - Peut notifier le système central du changement d’état du véhicule.
+        Side Effects:
+            - Lie le placement au véhicule
+            - Met à jour estDansParking = True
         """
         self.monPlacement = p
         self.estDansParking = True
 
     def obtenirHauteur(self):
-        """
-        Retourne la hauteur actuelle du véhicule.
-
-        Returns:
-            float: La hauteur du véhicule (en mètres).
-
-        Comportement attendu :
-            - Fournit la valeur enregistrée de la hauteur du véhicule.
-            - Utilisé notamment par la caméra ou le système de vérification de gabarit.
-        """
+        """Retourne la hauteur du véhicule en mètres."""
         return self.__hauteur
 
     def definirHauteur(self, hauteur):
         """
-        Définit la hauteur du véhicule.
+        Modifie la hauteur du véhicule.
 
         Args:
-            hauteur (float): Nouvelle valeur de la hauteur (en mètres).
-
-        Comportement attendu :
-            - Met à jour la hauteur enregistrée du véhicule.
-            - Peut être appelée après une mesure effectuée par la caméra.
+            hauteur (float): Nouvelle hauteur en mètres.
         """
         self.__hauteur = hauteur
 
     def obtenirLongueur(self):
-        """
-        Retourne la longueur actuelle du véhicule.
-
-        Returns:
-            float: La longueur du véhicule (en mètres).
-
-        Comportement attendu :
-            - Fournit la valeur enregistrée de la longueur du véhicule.
-            - Utilisé pour déterminer la compatibilité avec les emplacements disponibles.
-        """
+        """Retourne la longueur du véhicule en mètres."""
         return self.__longueur
 
     def definirLongueur(self, longueur):
         """
-        Définit la longueur du véhicule.
+        Modifie la longueur du véhicule.
 
         Args:
-            longueur (float): Nouvelle valeur de la longueur (en mètres).
-
-        Comportement attendu :
-            - Met à jour la longueur du véhicule.
-            - Peut être appelée après une mesure effectuée par la caméra ou le capteur.
+            longueur (float): Nouvelle longueur en mètres.
         """
         self.__longueur = longueur
 
     def obtenirImmatriculation(self):
-        """
-        Retourne l’immatriculation actuelle du véhicule.
-
-        Returns:
-            str: Numéro d’immatriculation du véhicule.
-
-        Comportement attendu :
-            - Fournit la plaque d’immatriculation du véhicule.
-            - Sert à identifier le véhicule lors des entrées/sorties ou pour les abonnements.
-        """
+        """Retourne le numéro d'immatriculation du véhicule."""
         return self.__immatriculation
 
     def definirImmatriculation(self, immatriculation):
         """
-        Définit le numéro d’immatriculation du véhicule.
+        Modifie le numéro d'immatriculation.
 
         Args:
-            immatriculation (str): Nouvelle immatriculation du véhicule.
-
-        Comportement attendu :
-            - Met à jour l’immatriculation enregistrée.
-            - Peut être appelée après une reconnaissance optique de la plaque par la caméra.
+            immatriculation (str): Nouvelle plaque d'immatriculation.
         """
         self.__immatriculation = immatriculation
-

@@ -4,53 +4,69 @@ from .placement import Placement
 
 class Teleporteur:
     """
-    Représente le téléporteur du système DreamPark.
+    Représente le système de téléportation automatique de véhicules.
 
-    Cet équipement permet de déplacer automatiquement un véhicule
-    vers une place de parking spécifique, sans intervention humaine.
+    Technologie futuriste permettant de déplacer instantanément les
+    véhicules vers leur place assignée sans intervention humaine.
+    Réduit drastiquement le temps de stationnement.
+
+    Attributes:
+        parking (Parking): Référence vers le parking pour rechercher des places.
     """
 
     def __init__(self, parking_instance):
+        """
+        Initialise le téléporteur avec référence au parking.
+
+        Args:
+            parking_instance (Parking): Le parking où opère ce téléporteur.
+        """
         self.parking = parking_instance
 
     def teleporterVoiture(self, v, p):
         """
-        Téléporte un véhicule donné vers une place de parking précise.
+        Téléporte un véhicule vers une place spécifique.
+
+        Crée un placement actif et établit tous les liens nécessaires
+        entre le véhicule, le placement et la place.
 
         Args:
-            v (Voiture): Objet représentant le véhicule à déplacer.
-            p (Place): Objet représentant la place de destination dans le parking.
+            v (Voiture): Le véhicule à téléporter.
+            p (Place): La place de destination.
 
         Returns:
-            Placement: Objet indiquant le nouveau placement du véhicule après la téléportation.
+            Placement: L'objet placement créé pour tracer ce stationnement.
 
-        Comportement attendu :
-            - Transfère virtuellement le véhicule jusqu'à la place spécifiée.
-            - Met à jour le statut du véhicule et de la place.
-            - Génère un objet `Placement` reflétant la nouvelle position du véhicule.
+        Side Effects:
+            - Crée un nouveau Placement
+            - Établit les liens Voiture ↔ Placement ↔ Place
+            - Met à jour v.estDansParking = True
         """
         nouveau_placement = Placement(date.today(), None, True)
 
         # Établir les liens bidirectionnels
-        p.addPlacementP(nouveau_placement)  # Place -> Placement (et Placement -> Place)
-        v.addPlacementV(nouveau_placement)  # Voiture -> Placement
+        p.addPlacementP(nouveau_placement)  # Place ↔ Placement
+        v.addPlacementV(nouveau_placement)  # Voiture ↔ Placement
 
         return nouveau_placement
 
     def teleporterVoitureSuperAbonne(self, v):
         """
-        Téléporte automatiquement le véhicule d'un client super abonné.
+        Téléportation prioritaire pour les clients Super Abonnés (Pack Garanti).
+
+        Recherche automatiquement une place disponible et téléporte le véhicule.
+        Si le parking est complet, active le service Valet premium.
 
         Args:
-            v (Voiture): Objet représentant le véhicule du super abonné.
+            v (Voiture): Le véhicule du super abonné.
 
         Returns:
-            String: Message décrivant le résultat de la téléportation (succès, échec, etc.).
+            str: Message confirmant la téléportation ou l'activation du Valet.
 
-        Comportement attendu :
-            - Identifie une place premium réservée aux super abonnés.
-            - Téléporte directement le véhicule sans intervention manuelle.
-            - Confirme la réussite de l'opération via un message ou un rapport système.
+        Algorithm:
+            1. Recherche place compatible
+            2. Si trouvée → téléportation standard
+            3. Si complet → service Valet (garantie pack)
         """
         place = self.parking.rechercherPlace(v)
 

@@ -1,27 +1,28 @@
 from datetime import date
+
+
 class Contrat:
     """
-    Représente un contrat liant un client au système DreamPark,
-    par exemple un contrat d'abonnement ou de service.
+    Représente un contrat d'abonnement entre un client et DreamPark.
 
-    Attributs :
-        dateDebut (date) : Date de début du contrat.
-        dateFin (date) : Date de fin prévue du contrat.
-        estEnCours (bool) : Indique si le contrat est toujours actif.
+    Le contrat matérialise juridiquement la relation d'abonnement,
+    définissant la durée de validité et le statut actif/inactif.
+
+    Attributes:
+        dateDebut (date): Date de début de validité du contrat.
+        dateFin (date): Date de fin prévue (None si durée indéterminée).
+        estEnCours (bool): True si le contrat est actuellement actif.
+        monAbonnement (Abonnement): L'abonnement associé à ce contrat.
     """
 
     def __init__(self, dateDebut, dateFin, estEnCours):
         """
-        Initialise un nouvel objet Contrat.
+        Initialise un nouveau contrat d'abonnement.
 
-        Attributs:
-            dateDebut (date): Date à laquelle le contrat entre en vigueur.
-            dateFin (date): Date prévue pour la fin du contrat.
-            estEnCours (bool): True si le contrat est actuellement actif.
-
-        Comportement attendu :
-            - Enregistre les dates de début et de fin.
-            - Définit le statut du contrat (actif ou terminé).
+        Args:
+            dateDebut (date): Date d'entrée en vigueur.
+            dateFin (date): Date de fin prévue (peut être None).
+            estEnCours (bool): Statut initial du contrat (True = actif).
         """
         self.dateDebut = dateDebut
         self.dateFin = dateFin
@@ -30,7 +31,12 @@ class Contrat:
 
     def rompreContract(self):
         """
-        Met fin au contrat actuel avant sa date de fin prévue.
+        Résilie le contrat avant sa date de fin naturelle.
+
+        Désactive le contrat et enregistre la date de rupture.
+
+        Note:
+            La date de fin est mise à jour avec la date du jour de résiliation.
         """
         self.estEnCours = False
-        self.dateDebut = date.today()
+        self.dateFin = date.today()

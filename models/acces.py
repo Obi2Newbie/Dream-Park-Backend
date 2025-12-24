@@ -9,23 +9,32 @@ from datetime import datetime
 
 class Acces:
     """
-    Représente un accès du parking DreamPark, permettant la gestion
-    des entrées et des sorties des véhicules et des clients.
+    Représente un point d'accès du parking DreamPark (entrée/sortie).
 
-    Cette classe regroupe les fonctionnalités liées à :
-        - L'activation des caméras à l'entrée ou à la sortie.
-        - L'affichage des informations sur les panneaux.
-        - Le déclenchement des procédures d'entrée pour les clients.
+    Cette classe orchestre l'ensemble des opérations liées à l'entrée
+    et à la sortie des véhicules : identification par caméra, vérification
+    du statut client, attribution de place, gestion des services additionnels.
+
+    Attributes:
+        MonParking (Parking): Référence vers le parking associé.
+        TelEntree (Teleporteur): Téléporteur utilisé pour l'entrée des véhicules.
+        __TelSortie (Teleporteur): Téléporteur utilisé pour la sortie (privé).
+        maBorne (Borne_ticket): Borne interactive pour les transactions.
+        monPanneau (Panneau_affichage): Panneau d'affichage des informations.
+        maCamera (Camera): Caméra pour l'identification des véhicules.
     """
 
     def __init__(self, camera, borne, panneau, tel_entree, tel_sortie, parking):
         """
-        Initialise un objet `acces`.
+        Initialise un point d'accès avec tous ses composants.
 
-        Comportement attendu :
-            - Prépare l'accès à être utilisé pour la gestion des entrées et sorties.
-            - Peut initialiser les composants associés tels que la caméra et le panneau d'affichage.
-            - Les détails d'initialisation (ex. numéro d'accès, position, type) seront définis ultérieurement.
+        Args:
+            camera (Camera): Caméra pour capturer les informations véhicule.
+            borne (Borne_ticket): Borne pour les interactions client.
+            panneau (Panneau_affichage): Panneau d'affichage dynamique.
+            tel_entree (Teleporteur): Téléporteur pour les entrées.
+            tel_sortie (Teleporteur): Téléporteur pour les sorties.
+            parking (Parking): Le parking associé à cet accès.
         """
         self.MonParking = parking
         self.TelEntree = tel_entree
@@ -36,56 +45,65 @@ class Acces:
 
     def actionnerCamera(self, c):
         """
-        Active la caméra associée à cet accès pour identifier un véhicule.
+        Active la caméra pour identifier le véhicule d'un client.
+
+        Capture les dimensions et l'immatriculation du véhicule existant
+        du client sans créer de nouvelle instance.
 
         Args:
-            c (Client): Objet représentant le client entrant ou sortant.
+            c (Client): Le client dont on veut identifier le véhicule.
 
         Returns:
-            Voiture: L'objet Voiture du client (pas une nouvelle instance).
+            Voiture: Le véhicule existant du client, ou None si absent.
 
-        Comportement attendu :
-            - Déclenche la caméra pour capturer la plaque d'immatriculation et les dimensions du véhicule.
-            - Retourne la voiture existante du client.
-            - Peut être utilisé au moment de l'entrée pour attribuer une place de parking.
+        Note:
+            Retourne la voiture existante du client, ne crée pas de nouvelle instance.
         """
         if c.maVoiture:
-            # On utilise la voiture existante du client, pas une nouvelle
             vHauteur = self.maCamera.capturerHauteur(c.maVoiture)
             vLongueur = self.maCamera.capturerLongueur(c.maVoiture)
             vImma = self.maCamera.capturerImmatr(c.maVoiture)
-
-            # Retourner la voiture existante, pas en créer une nouvelle
             return c.maVoiture
         return None
 
     def actionnerPanneau(self):
         """
-        Active le panneau d'affichage situé à l'accès.
+        Active le panneau d'affichage pour informer les clients.
 
         Returns:
-            String: Message affiché sur le panneau (par exemple, le nombre de places disponibles).
+            str: Message indiquant le nombre de places disponibles.
 
-        Comportement attendu :
-            - Affiche des informations dynamiques (places libres, niveau complet, etc.).
-            - Sert d'interface visuelle pour les clients à l'entrée et à la sortie.
+        Note:
+            Affiche des informations en temps réel sur l'état du parking.
         """
         if self.MonParking and self.monPanneau:
             return self.monPanneau.afficherNbPlacesDisponibles()
 
     def lancerProcedureEntree(self, c):
         """
-        Lance la procédure d'entrée complète pour un client.
-        Gère désormais la priorité pour les Super Abonnés (Pack Garanti).
+        Orchestre la procédure complète d'entrée d'un client dans le parking.
+
+        Cette méthode gère :
+        - L'identification du véhicule via caméra
+        - La vérification du statut client (super abonné, abonné, nouveau)
+        - La recherche et l'attribution d'une place
+        - La proposition d'abonnements aux nouveaux clients
+        - La proposition de services aux clients abonnés
+        - La téléportation du véhicule
 
         Args:
-            c (Client): Objet représentant le client souhaitant entrer.
+            c (Client): Le client souhaitant entrer dans le parking.
 
         Returns:
-            string: Message indiquant le résultat de la procédure.
+            str: Message confirmant l'entrée et la place assignée, ou signalant
+                 que le parking est complet.
+
+        Flow:
+            1. Super Abonné → Téléportation prioritaire immédiate
+            2. Nouveau Client → Tunnel de vente d'abonnement
+            3. Abonné Standard → Menu services (maintenance, entretien, livraison)
         """
         # 1. Identification du véhicule via la caméra
-        # Note : actionnerCamera retourne maintenant la voiture existante du client
         voiture = self.actionnerCamera(c)
         statut = self.maBorne.recupererInfosCarte(c)
         print(statut)
@@ -93,19 +111,23 @@ class Acces:
         # 2. Recherche d'une place physique dans le parking
         placeAssignee = self.MonParking.rechercherPlace(voiture)
 
+        # 3. Traitement prioritaire pour les Super Abonnés
         if c.estSuperAbonne:
             message = self.TelEntree.teleporterVoitureSuperAbonne(voiture)
             return f"Bienvenue {c.nom}. {message}"
 
         elif placeAssignee is not None:
-            # CAS 1 : Il y a de la place
+            # 4. Confirmation du statut d'abonné
             while True:
                 temp = input("Est vous un abonné ? y/n\n").lower()
                 if temp in ["y", "n"]:
                     break
                 print("Erreur! Veillez sélectionner que 'y' ou 'n'")
+
             print("Vérification de votre statut client... Veillez patienter...")
             time.sleep(1)
+
+            # 5. Tunnel de vente pour les non-abonnés
             if not c.estAbonne:
                 print("Retour système: Client non Abonné...")
                 self.maBorne.proposerTypePaiement()
@@ -115,10 +137,11 @@ class Acces:
                 placeAssignee.definir_estLibre(False)
                 return f"Bienvenue {c.nom}. Place assignée : {placeAssignee.obtenir_niveau()}{placeAssignee.numero}"
 
-            # Téléportation standard
+            # 6. Menu services pour les abonnés
             print("Retour système: Client est un abonné")
             service = self.maBorne.proposerServices()
             print("Service est ", service)
+
             match service:
                 case "1":
                     print(">> Ajout du service : Maintenance Technique")
@@ -131,15 +154,10 @@ class Acces:
                     while True:
                         date_input = input("   Veuillez saisir la date de livraison (JJ/MM/AAAA) : ")
                         try:
-                            # 1. On essaie de convertir la chaîne en objet Date
                             date_obj = datetime.strptime(date_input, "%d/%m/%Y")
-
-                            # 2. (Optionnel) Vérifier que la date n'est pas passée
                             if date_obj.date() < datetime.now().date():
                                 print("   Erreur : Vous ne pouvez pas choisir une date passée.")
                                 continue
-
-                            # Si tout est bon, on valide et on garde la chaîne
                             date_liv = date_input
                             break
                         except ValueError:
@@ -149,8 +167,11 @@ class Acces:
                     c.demanderLivraison(date_liv, heure_liv, adresse_liv)
                 case "4":
                     print(">> Aucun service supplémentaire sélectionné.")
+
+            # 7. Téléportation et confirmation
             print(self.maBorne.deliverTicket(c))
             self.TelEntree.teleporterVoiture(voiture, placeAssignee)
             placeAssignee.definir_estLibre(False)
             return f"Bienvenue {c.nom}. Place assignée : {placeAssignee.obtenir_niveau()}{placeAssignee.numero}"
+
         return "Aucune place disponible pour votre véhicule."
