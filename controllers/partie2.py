@@ -89,21 +89,75 @@ print("--- ÉTAT DU PARKING APRÈS LES ENTRÉES ---")
 for p in parking_central.mesPlaces:
     print(p)
 
+# =================================================================
+# 6. EXÉCUTION DES SERVICES DEMANDÉS
+# =================================================================
+
+print("\n" + "=" * 60)
+print("=== PHASE D'EXÉCUTION DES SERVICES ===")
+print("=" * 60)
+
+# Création d'un voiturier pour les livraisons
+voiturier_1 = Voiturier(1)
+
+# Parcourir tous les clients pour exécuter leurs services
+tous_les_clients = [client_vip, client_std, client_neuf]
+
+for client in tous_les_clients:
+    if client.mesServices:
+        print(f"\n--- Services demandés par {client.nom} ---")
+
+        for service in client.mesServices:
+            # Vérifier le type de service et l'exécuter
+            if hasattr(service, 'effectuerMaintenance'):  # Service Maintenance
+                print(f"🔧 Exécution de la maintenance pour {client.maVoiture.obtenirImmatriculation()}")
+                rapport = service.effectuerMaintenance(client.maVoiture)
+                print(f"   ✓ {rapport}")
+
+            elif hasattr(service, 'effectuerEntretien'):  # Service Entretien
+                print(f"🧼 Exécution de l'entretien pour {client.maVoiture.obtenirImmatriculation()}")
+                rapport = service.effectuerEntretien()
+                print(f"   ✓ {rapport}")
+
+            elif hasattr(service, 'effectuerLivraison'):  # Service Livraison
+                print(f"🚗 Préparation de la livraison pour {client.maVoiture.obtenirImmatriculation()}")
+                service.effectuerLivraison()
+                print(f"   ✓ {service.rapport}")
+
+                # Le voiturier effectue la livraison
+                resultat = voiturier_1.livrerVoiture(
+                    client.maVoiture,
+                    service.dateDemande,
+                    service.heure
+                )
+                print(f"   📍 {resultat}")
+    else:
+        print(f"\n{client.nom} n'a demandé aucun service additionnel.")
 
 print("\n" + "=" * 60)
 print("=== PHASE DE SORTIE DES VÉHICULES ===")
 print("=" * 60)
-# =================================================================
-# 6. PROCÉDURE DE SORTIE DU PARKING
-# =================================================================
-
-# Sortie des trois clients
-reprendre_la_voiture.executer_procedure_sortie(client_vip, parking_central)
-reprendre_la_voiture.executer_procedure_sortie(client_std, parking_central)
-reprendre_la_voiture.executer_procedure_sortie(client_neuf, parking_central)
 
 # =================================================================
-# 7. ÉTAT FINAL DU PARKING (TOUTES PLACES LIBÉRÉES)
+# 7. PROCÉDURE DE SORTIE DU PARKING
+# =================================================================
+
+# Sortie des clients (seulement ceux qui n'ont pas demandé de livraison)
+for client in tous_les_clients:
+    # Vérifier si le client a demandé une livraison
+    a_demande_livraison = any(
+        hasattr(service, 'effectuerLivraison')
+        for service in client.mesServices
+    )
+
+    if not a_demande_livraison:
+        reprendre_la_voiture.executer_procedure_sortie(client, parking_central)
+    else:
+        print(f"\n--- {client.nom} ---")
+        print(f"Véhicule déjà livré à domicile via le service Voiturier.")
+
+# =================================================================
+# 8. ÉTAT FINAL DU PARKING (TOUTES PLACES LIBÉRÉES)
 # =================================================================
 
 print("\n" + "=" * 60)
@@ -111,3 +165,21 @@ print("--- ÉTAT FINAL DU PARKING (APRÈS SORTIES) ---")
 for p in parking_central.mesPlaces:
     print(p)
 print("=" * 60)
+
+# =================================================================
+# 9. RÉSUMÉ DES SERVICES EXÉCUTÉS
+# =================================================================
+
+print("\n" + "=" * 60)
+print("=== RÉSUMÉ DES SERVICES EXÉCUTÉS ===")
+print("=" * 60)
+
+for client in tous_les_clients:
+    print(f"\n{client.nom}:")
+    if client.mesServices:
+        for idx, service in enumerate(client.mesServices, 1):
+            print(f"   {idx}. {service.__class__.__name__}: {service.rapport}")
+    else:
+        print("   Aucun service demandé")
+
+print("\n" + "=" * 60)
