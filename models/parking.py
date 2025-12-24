@@ -96,3 +96,6 @@ class Parking:
             - Sert à gérer les droits ou tarifs spécifiques des clients abonnés.
         """
         self.mesAbonnements.append(ab)
+
+    def obtenirPrix(self):
+        return self.__prix

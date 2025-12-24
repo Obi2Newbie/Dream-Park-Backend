@@ -46,6 +46,7 @@ class Borne_ticket:
             service = input("Services:\n1. pour Maintenance,\n2. pour Entretien,\n3. pour Livraison,\n4. pour aucun service\n")
             if service in ["1", "2", "3", "4"]:
                 break
+            print("Erreur! Veillez que choisir 1, 2, 3 ou 4")
         return service
 
     def proposerAbonnements(self, c, p):
@@ -71,6 +72,7 @@ class Borne_ticket:
             choix = input("1. pour abonnement standard\n2. pour super abonné\n3. pour continue sans abonnement\n")
             if choix in ["1", "2", "3"]:
                 break
+            print("Erreur! Veillez que choisir 1, 2 ou 3")
         match choix:
             case "1":
                 abonnement = Abonnement("abonne", 10, False)
@@ -85,7 +87,7 @@ class Borne_ticket:
                 c.sAbonner(abonnement)
                 p.addAbonnement(abonnement)
             case "3":
-                c.estAbonne = True
+                c.estAbonne = False
                 c.estSuperAbonne = False
         print("Préférences enregistrées.")
 
@@ -108,9 +110,11 @@ class Borne_ticket:
             temp = input("Est vous un super abonné ? y/n\n").lower()
             if temp in ["y", "n"]:
                 break
+            print("Erreur veillez sélectionner que 'y' ou 'n'")
         print("Vérification de votre statut client... Veillez patienter...")
         time.sleep(1)
-        if c.estSuperAbonne and temp == 'y':
+        if c.estSuperAbonne:
+            print("Retour systeme: Client est super abonné.")
             return f"Carte validée pour {c.nom}"
         return "Client non super abonné"
 
