@@ -1,6 +1,3 @@
-from datetime import date
-
-
 class Placement:
     """
     Représente le stationnement effectif d'un véhicule dans une place.
@@ -24,10 +21,6 @@ class Placement:
             dateFin (date, optional): Date de sortie prévue. Defaults to None.
             estEnCours (bool, optional): Statut actif. Defaults to True.
         """
-        self.dateDebut = dateDebut
-        self.dateFin = dateFin
-        self.estEnCours = estEnCours
-        self.maPlace = None
 
     def partirPlace(self):
         """
@@ -41,8 +34,3 @@ class Placement:
             - Enregistre la date de sortie
             - Libère automatiquement la place (maPlace.definir_estLibre(True))
         """
-        self.estEnCours = False
-        self.dateFin = date.today()
-
-        if self.maPlace:
-            self.maPlace.definir_estLibre(True)

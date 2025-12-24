@@ -1,7 +1,4 @@
-from .service import Service
-
-
-class Maintenance(Service):
+class Maintenance():
     """
     Représente un service de maintenance technique pour véhicules.
 
@@ -19,7 +16,6 @@ class Maintenance(Service):
         Args:
             dateDemande (date): Date à laquelle le client a demandé le service.
         """
-        super().__init__(dateDemande, None, "Maintenance non effectué")
 
     def effectuerMaintenance(self, v):
         """
@@ -34,5 +30,3 @@ class Maintenance(Service):
         Side Effects:
             Met à jour l'attribut rapport avec les détails d'intervention.
         """
-        self.rapport = f"Maintenance effectuée sur {v.obtenirImmatriculation()}"
-        return self.rapport

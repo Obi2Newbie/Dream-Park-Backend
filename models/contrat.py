@@ -1,6 +1,3 @@
-from datetime import date
-
-
 class Contrat:
     """
     Représente un contrat d'abonnement entre un client et DreamPark.
@@ -24,10 +21,6 @@ class Contrat:
             dateFin (date): Date de fin prévue (peut être None).
             estEnCours (bool): Statut initial du contrat (True = actif).
         """
-        self.dateDebut = dateDebut
-        self.dateFin = dateFin
-        self.estEnCours = estEnCours
-        self.monAbonnement = None
 
     def rompreContract(self):
         """
@@ -38,5 +31,3 @@ class Contrat:
         Note:
             La date de fin est mise à jour avec la date du jour de résiliation.
         """
-        self.estEnCours = False
-        self.dateFin = date.today()

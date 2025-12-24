@@ -1,6 +1,3 @@
-from .placement import Placement
-
-
 class Voiture:
     """
     Représente un véhicule géré par le système DreamPark.
@@ -27,12 +24,6 @@ class Voiture:
             immatriculation (str): Numéro de plaque.
             estDansParking (bool, optional): Statut initial. Defaults to False.
         """
-        self.__hauteur = float(hauteur)
-        self.__longueur = float(longueur)
-        self.__immatriculation = immatriculation
-        self.estDansParking = estDansParking
-        self.proprietaire = None
-        self.monPlacement = None
 
     def addPlacementV(self, p):
         """
@@ -45,12 +36,9 @@ class Voiture:
             - Lie le placement au véhicule
             - Met à jour estDansParking = True
         """
-        self.monPlacement = p
-        self.estDansParking = True
 
     def obtenirHauteur(self):
         """Retourne la hauteur du véhicule en mètres."""
-        return self.__hauteur
 
     def definirHauteur(self, hauteur):
         """
@@ -59,11 +47,10 @@ class Voiture:
         Args:
             hauteur (float): Nouvelle hauteur en mètres.
         """
-        self.__hauteur = hauteur
 
     def obtenirLongueur(self):
         """Retourne la longueur du véhicule en mètres."""
-        return self.__longueur
+
 
     def definirLongueur(self, longueur):
         """
@@ -72,11 +59,9 @@ class Voiture:
         Args:
             longueur (float): Nouvelle longueur en mètres.
         """
-        self.__longueur = longueur
 
     def obtenirImmatriculation(self):
         """Retourne le numéro d'immatriculation du véhicule."""
-        return self.__immatriculation
 
     def definirImmatriculation(self, immatriculation):
         """
@@ -85,4 +70,3 @@ class Voiture:
         Args:
             immatriculation (str): Nouvelle plaque d'immatriculation.
         """
-        self.__immatriculation = immatriculation

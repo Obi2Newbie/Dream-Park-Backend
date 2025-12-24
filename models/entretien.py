@@ -1,7 +1,4 @@
-from .service import Service
-
-
-class Entretien(Service):
+class Entretien():
     """
     Représente un service d'entretien de véhicule dans DreamPark.
 
@@ -18,7 +15,6 @@ class Entretien(Service):
         Args:
             dateDemande (date): Date à laquelle le client a demandé le service.
         """
-        super().__init__(dateDemande, None, "Entretien non effectué")
 
     def effectuerEntretien(self):
         """
@@ -30,5 +26,3 @@ class Entretien(Service):
         Side Effects:
             Met à jour l'attribut rapport avec le compte-rendu.
         """
-        self.rapport = "L'entretien demandé par le client est fait."
-        return self.rapport

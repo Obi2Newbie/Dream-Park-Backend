@@ -1,7 +1,4 @@
-from .service import Service
-
-
-class Livraison(Service):
+class Livraison():
     """
     Représente un service de livraison de véhicule par voiturier.
 
@@ -25,9 +22,6 @@ class Livraison(Service):
             heure (str): Heure de livraison souhaitée (ex: "14" pour 14h).
             adresse (str): Adresse complète de destination.
         """
-        super().__init__(dateDemande, None, "Livraison non effectué")
-        self.adresse = adresse
-        self.heure = heure
 
     def effectuerLivraison(self):
         """
@@ -39,4 +33,3 @@ class Livraison(Service):
         Side Effects:
             Met à jour l'attribut rapport avec les détails de livraison.
         """
-        self.rapport = f"Livraison effectuée à {self.adresse} à {self.heure}h"

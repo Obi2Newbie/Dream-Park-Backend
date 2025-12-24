@@ -1,7 +1,3 @@
-from datetime import date
-from .placement import Placement
-
-
 class Teleporteur:
     """
     Représente le système de téléportation automatique de véhicules.
@@ -21,7 +17,6 @@ class Teleporteur:
         Args:
             parking_instance (Parking): Le parking où opère ce téléporteur.
         """
-        self.parking = parking_instance
 
     def teleporterVoiture(self, v, p):
         """
@@ -42,13 +37,7 @@ class Teleporteur:
             - Établit les liens Voiture ↔ Placement ↔ Place
             - Met à jour v.estDansParking = True
         """
-        nouveau_placement = Placement(date.today(), None, True)
 
-        # Établir les liens bidirectionnels
-        p.addPlacementP(nouveau_placement)  # Place ↔ Placement
-        v.addPlacementV(nouveau_placement)  # Voiture ↔ Placement
-
-        return nouveau_placement
 
     def teleporterVoitureSuperAbonne(self, v):
         """
@@ -68,12 +57,3 @@ class Teleporteur:
             2. Si trouvée → téléportation standard
             3. Si complet → service Valet (garantie pack)
         """
-        place = self.parking.rechercherPlace(v)
-
-        if place:
-            self.teleporterVoiture(v, place)
-            place.definir_estLibre(False)
-            return f"Voiture garée dans le parking {place.obtenir_niveau()}{place.numero}"
-        else:
-            v.estDansParking = True
-            return "Parking complet : Voiture prise en charge par le service Valet (Pack Garanti)."

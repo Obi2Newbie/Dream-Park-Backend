@@ -17,4 +17,3 @@ class Panneau_affichage:
         Returns:
             str: Message formaté indiquant le nombre de places disponibles.
         """
-        return f"Places libres: {p.NbPlacesDisponibles()}"

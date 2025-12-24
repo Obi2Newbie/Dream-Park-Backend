@@ -1,6 +1,3 @@
-from .place import Place
-
-
 class Parking:
     """
     Représente le parking central du système DreamPark (Singleton).
@@ -24,8 +21,6 @@ class Parking:
         acces2 (Acces): Second point d'accès (sortie Sud).
     """
 
-    __instance = None
-
     def __new__(cls, *args, **kwargs):
         """
         Implémente le pattern Singleton.
@@ -35,9 +30,6 @@ class Parking:
         Returns:
             Parking: L'instance unique du parking.
         """
-        if cls.__instance is None:
-            cls.__instance = super(Parking, cls).__new__(cls)
-        return cls.__instance
 
     def __init__(self, nbPlacesParNiveau, nbPlacesLibres, prix, nBNiveau):
         """
@@ -52,16 +44,7 @@ class Parking:
         Note:
             N'initialise qu'une seule fois grâce au flag 'initialized'.
         """
-        if not hasattr(self, 'initialized'):
-            self.__nbPlacesParNiveau = nbPlacesParNiveau
-            self.__nbPlacesLibres = nbPlacesLibres
-            self.__prix = prix
-            self.mesPlaces = []
-            self.mesAbonnements = []
-            self.nBNiveau = nBNiveau
-            self.acces1 = None
-            self.acces2 = None
-            self.initialized = True
+
 
     def rechercherPlace(self, v):
         """
@@ -83,12 +66,7 @@ class Parking:
             2. Sa hauteur >= hauteur du véhicule ?
             3. Sa longueur >= longueur du véhicule ?
         """
-        for place in self.mesPlaces:
-            if (place.obtenir_estLibre() and
-                    place.obtenir_hauteur() >= v.obtenirHauteur() and
-                    place.obtenir_longueur() >= v.obtenirLongueur()):
-                return place
-        return None
+
 
     def nbPlacesLibresParNiveau(self, niveau):
         """
@@ -103,12 +81,6 @@ class Parking:
         Side Effects:
             Met à jour l'attribut privé __nbPlacesLibres.
         """
-        placeLibre = 0
-        for p in self.mesPlaces:
-            if p.obtenir_niveau() == niveau and p.obtenir_estLibre():
-                placeLibre += 1
-        self.__nbPlacesLibres = placeLibre
-        return placeLibre
 
     def addAbonnement(self, ab):
         """
@@ -121,7 +93,6 @@ class Parking:
             Permet de suivre tous les abonnements actifs pour statistiques
             et gestion de la clientèle.
         """
-        self.mesAbonnements.append(ab)
 
     def obtenirPrix(self):
         """
@@ -130,4 +101,3 @@ class Parking:
         Returns:
             float: Tarif horaire en euros.
         """
-        return self.__prix

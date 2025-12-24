@@ -23,10 +23,6 @@ class Abonnement:
             prix (float): Montant mensuel de l'abonnement.
             estPackGar (bool): True si l'abonnement comprend le pack garanti.
         """
-        self.libelle = libelle
-        self.prix = float(prix)
-        self.estPackGar = estPackGar
-        self.mesAbonnements = []
 
     def addContrat(self, contrat):
         """
@@ -41,5 +37,3 @@ class Abonnement:
         Note:
             Évite les doublons en vérifiant si le contrat n'est pas déjà présent.
         """
-        if contrat not in self.mesAbonnements:
-            self.mesAbonnements.append(contrat)

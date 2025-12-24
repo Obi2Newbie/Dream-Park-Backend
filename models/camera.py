@@ -21,7 +21,7 @@ class Camera:
         Returns:
             float: Hauteur du véhicule en mètres.
         """
-        return v.obtenirHauteur()
+
 
     def capturerLongueur(self, v):
         """
@@ -33,7 +33,7 @@ class Camera:
         Returns:
             float: Longueur du véhicule en mètres.
         """
-        return v.obtenirLongueur()
+
 
     def capturerImmatr(self, v):
         """
@@ -45,4 +45,3 @@ class Camera:
         Returns:
             str: Numéro d'immatriculation détecté.
         """
-        return v.obtenirImmatriculation()

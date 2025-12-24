@@ -16,7 +16,6 @@ class Voiturier:
         Args:
             numVoiturier (int): Numéro d'identification unique.
         """
-        self.numVoiturier = numVoiturier
 
     def livrerVoiture(self, v, date, heure):
         """
@@ -41,19 +40,3 @@ class Voiturier:
         Raises:
             Retourne un message d'erreur si le véhicule n'est pas dans le parking.
         """
-        if not v.estDansParking:
-            return f"Erreur : La voiture {v.obtenirImmatriculation()} n'est pas dans le parking."
-
-        if v.monPlacement:
-            v.monPlacement.partirPlace()
-
-        # Mise à jour du service de livraison si trouvé
-        if v.proprietaire and hasattr(v.proprietaire, 'mesServices'):
-            for service in v.proprietaire.mesServices:
-                if hasattr(service, 'adresse') and service.dateDemande == date:
-                    service.dateService = date.today()
-                    service.rapport = (f"Livraison effectuée avec succès à {heure}h "
-                                       f"par le voiturier n°{self.numVoiturier}.")
-                    break
-
-        return f"Le voiturier {self.numVoiturier} a livré la voiture {v.obtenirImmatriculation()} le {date} à {heure}h."

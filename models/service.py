@@ -20,6 +20,3 @@ class Service:
             dateService (date): Date prévue/réalisée du service.
             rapport (str): État initial du rapport.
         """
-        self.dateDemande = dateDemande
-        self.dateService = dateService
-        self.rapport = rapport

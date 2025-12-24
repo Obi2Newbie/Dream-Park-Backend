@@ -1,7 +1,3 @@
-import time
-from models import Abonnement
-
-
 class Borne_ticket:
     """
     Représente une borne interactive du système DreamPark.
@@ -27,7 +23,7 @@ class Borne_ticket:
         Returns:
             str: Ticket formaté "NomClient-Immatriculation".
         """
-        return f"{c.nom}-{c.maVoiture.obtenirImmatriculation()}"
+
 
     def proposerServices(self):
         """
@@ -45,13 +41,6 @@ class Borne_ticket:
         Note:
             Boucle jusqu'à obtention d'une saisie valide.
         """
-        while True:
-            service = input(
-                "Services:\n1. pour Maintenance,\n2. pour Entretien,\n3. pour Livraison,\n4. pour aucun service\n")
-            if service in ["1", "2", "3", "4"]:
-                break
-            print("Erreur! Veillez que choisir 1, 2, 3 ou 4")
-        return service
 
     def proposerAbonnements(self, c, p):
         """
@@ -70,34 +59,6 @@ class Borne_ticket:
             Met à jour le statut du client (estAbonne, estSuperAbonne).
             Crée et associe un abonnement au client si souscription.
         """
-        print("\n--- BIENVENUE CHEZ DREAMPARK ---")
-        print(f"Ravi de vous rencontrer, {c.nom}.")
-        print("Souhaitez-vous souscrire à un abonnement pour cette visite ?\n")
-
-        while True:
-            choix = input("1. pour abonnement standard\n2. pour super abonné\n3. pour continue sans abonnement\n")
-            if choix in ["1", "2", "3"]:
-                break
-            print("Erreur! Veillez que choisir 1, 2 ou 3")
-
-        match choix:
-            case "1":
-                abonnement = Abonnement("abonne", 10, False)
-                c.estAbonne = True
-                c.estSuperAbonne = False
-                c.sAbonner(abonnement)
-                p.addAbonnement(abonnement)
-            case "2":
-                abonnement = Abonnement("abonne", 5, True)
-                c.estAbonne = True
-                c.estSuperAbonne = True
-                c.sAbonner(abonnement)
-                p.addAbonnement(abonnement)
-            case "3":
-                c.estAbonne = False
-                c.estSuperAbonne = False
-
-        print("Préférences enregistrées.")
 
     def recupererInfosCarte(self, c):
         """
@@ -115,19 +76,7 @@ class Borne_ticket:
         Note:
             Demande une confirmation manuelle pour le test du système.
         """
-        while True:
-            temp = input("Est vous un super abonné ? y/n\n").lower()
-            if temp in ["y", "n"]:
-                break
-            print("Erreur veillez sélectionner que 'y' ou 'n'")
 
-        print("Vérification de votre statut client... Veillez patienter...")
-        time.sleep(1)
-
-        if c.estSuperAbonne:
-            print("Retour systeme: Client est super abonné.")
-            return f"Carte validée pour {c.nom}"
-        return "Client non super abonné"
 
     def proposerTypePaiement(self):
         """
@@ -140,16 +89,3 @@ class Borne_ticket:
         Note:
             Valide la saisie et affiche une confirmation du mode choisi.
         """
-        while True:
-            paiement = input(
-                "Comment allez vous regler le paiement ?: Appuyer sur 1 pour CB / Appuyer sur 2 pour Espèces \n")
-            if paiement in ["1", "2"]:
-                break
-            else:
-                print("Erreur : Veuillez appuyer sur le bon bouton.")
-
-        match paiement:
-            case "1":
-                print("Merci pour avoir sélectionné l'option CB")
-            case "2":
-                print("Merci pour avoir sélectionné l'option Espèces")

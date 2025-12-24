@@ -1,11 +1,3 @@
-from .voiture import Voiture
-from .contrat import Contrat
-from .maintenance import Maintenance
-from .livraison import Livraison
-from .entretien import Entretien
-from datetime import date
-
-
 class Client:
     """
     Représente un utilisateur du système DreamPark.
@@ -37,15 +29,6 @@ class Client:
             estSuperAbonne (bool, optional): Statut pack garanti. Defaults to False.
             nbFrequentation (int, optional): Nombre de visites. Defaults to 0.
         """
-        self.nom = nom
-        self.adresse = adresse
-        self.estAbonne = estAbonne
-        self.estSuperAbonne = estSuperAbonne
-        self.nbFrequentation = nbFrequentation
-        self.mesServices = []
-        self.maVoiture = None
-        self.monAbonnement = None
-        self.monContrat = None
 
     def sAbonner(self, ab):
         """
@@ -65,18 +48,6 @@ class Client:
             - Lie le contrat à l'abonnement
             - Met à jour estAbonne et potentiellement estSuperAbonne
         """
-        nouvContrat = Contrat(date.today(), None, True)
-        nouvContrat.monAbonnement = ab
-        ab.addContrat(nouvContrat)
-
-        self.monContrat = nouvContrat
-        self.monAbonnement = ab
-        self.estAbonne = True
-
-        if ab.estPackGar:
-            self.estSuperAbonne = True
-
-        return "Abonnement validé, merci de nous faire confiance!"
 
     def nouvelleVoiture(self, imma, hautV, longV):
         """
@@ -90,7 +61,6 @@ class Client:
         Note:
             Remplace le véhicule précédent s'il existait.
         """
-        self.maVoiture = Voiture(hautV, longV, imma)
 
     def seDesabonner(self):
         """
@@ -104,11 +74,6 @@ class Client:
             - Réinitialise estAbonne et estSuperAbonne à False
             - Supprime la référence à l'abonnement
         """
-        if self.monContrat:
-            self.monContrat.rompreContract()
-        self.estAbonne = False
-        self.estSuperAbonne = False
-        self.monAbonnement = None
 
     def demanderMaintenance(self):
         """
@@ -120,11 +85,6 @@ class Client:
             Maintenance: Objet représentant la demande de maintenance,
                         ou str avec message d'erreur si non abonné.
         """
-        if self.estAbonne:
-            service = Maintenance(date.today())
-            self.mesServices.append(service)
-            return service
-        return "Service réservé aux abonnés"
 
     def demanderLivraison(self, dateLiv, heure, adresseLiv):
         """
@@ -141,9 +101,6 @@ class Client:
         Returns:
             Livraison: Objet représentant la demande de livraison.
         """
-        livraison = Livraison(dateLiv, heure, adresseLiv)
-        self.mesServices.append(livraison)
-        return livraison
 
     def demanderEntretien(self):
         """
@@ -155,11 +112,6 @@ class Client:
             Entretien: Objet représentant la demande d'entretien,
                       ou str avec message d'erreur si non abonné.
         """
-        if self.estAbonne:
-            service = Entretien(date.today())
-            self.mesServices.append(service)
-            return service
-        return "Seule les abonnés peuvent rajouter ce service"
 
     def entreParking(self, a):
         """
@@ -171,5 +123,3 @@ class Client:
         Args:
             a (Acces): Le point d'accès utilisé pour entrer.
         """
-        a.lancerProcedureEntree(self)
-        self.nbFrequentation += 1
