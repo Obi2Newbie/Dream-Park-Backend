@@ -1,302 +1,198 @@
-# DreamPark - Partie 3 : Base de Données SQLite
+# DreamPark - Partie 4: Interface Graphique Complète
 
-## Objectif
+## Description
 
-Créer une base de données SQLite pour le système DreamPark permettant de stocker et gérer toutes les informations du parking de manière persistante.
+Partie 4 du projet DreamPark - Système de gestion intelligent de parking avec interface graphique complète basée sur le modèle MVC (Model-View-Controller). Cette application fournit une interface utilisateur intuitive pour gérer toutes les opérations du parking, incluant les entrées/sorties de véhicules, les services pour abonnés, et l'administration.
 
-## Fichier
 
-```
-partie3.py    # Script de création et peuplement de la base de données
-```
+## Architecture
 
-## Structure de la Base de Données
+### Model (DreamParkModel)
+- Gestion de la base de données SQLite
+- Logique métier du parking
+- Création et vérification des tables
+- Gestion des transactions
 
-La base de données respecte strictement le diagramme de classes fourni dans le projet.
+### Controller (DreamParkController)
+- Logique de contrôle entre le modèle et la vue
+- Traitement des événements utilisateur
+- Mise à jour de l'affichage
 
-### Table : Parking
+### View (DreamParkView)
+- Interface graphique complète avec Tkinter
+- Onglets multiples pour différentes fonctionnalités
+- Affichage en temps réel des statistiques
 
-```sql
-CREATE TABLE Parking (
-    id_parking INTEGER PRIMARY KEY,
-    nb_places_par_niveau INTEGER NOT NULL,
-    nb_places_libres INTEGER NOT NULL,
-    prix REAL NOT NULL,
-    nb_niveaux INTEGER NOT NULL
-)
-```
+## Fonctionnalités Principales
 
-### Table : Place
+### 1. Onglet Accueil
+- Panneaux d'affichage extérieurs pour les 2 accès (Nord et Sud)
+- Affichage dynamique du nombre de places disponibles par accès
+- Statistiques en temps réel:
+  - Taux d'occupation
+  - Véhicules présents
+  - Total clients
+  - Services actifs
+- Code couleur selon la disponibilité (vert/orange/rouge)
 
-```sql
-CREATE TABLE Place (
-    id_place INTEGER PRIMARY KEY,
-    numero INTEGER NOT NULL,
-    niveau VARCHAR(10) NOT NULL,
-    longueur REAL NOT NULL,
-    hauteur REAL NOT NULL,
-    est_libre BOOLEAN DEFAULT 1,
-    id_parking INTEGER NOT NULL,
-    FOREIGN KEY (id_parking) REFERENCES Parking(id_parking)
-)
-```
+### 2. Onglet Accès Entrée
+- Simulation de caméra pour capture d'immatriculation
+- Choix de l'accès (Nord ou Sud)
+- Mode de paiement (CB ou Espèces)
+- Système de téléportation automatique des véhicules
+- Enregistrement automatique des nouveaux clients/véhicules
+- Gestion du Pack Garanti pour super abonnés
 
-### Table : Client
+### 3. Onglet Accès Sortie
+- Recherche par ticket ou immatriculation
+- Choix de l'accès de sortie
+- Calcul automatique de la durée et du tarif
+- Système de téléportation pour récupération du véhicule
+- Tarifs différenciés selon le type de client
 
-```sql
-CREATE TABLE Client (
-    id_client INTEGER PRIMARY KEY,
-    nom VARCHAR(100) NOT NULL,
-    adresse TEXT,
-    est_abonne BOOLEAN DEFAULT 0,
-    est_super_abonne BOOLEAN DEFAULT 0,
-    nb_frequentation INTEGER DEFAULT 0
-)
-```
+### 4. Onglet Services (Abonnés uniquement)
+- Service de livraison avec choix d'adresse et d'heure
+- Service d'entretien
+- Service de maintenance
+- Affichage des résultats et assignation automatique des voituriers
 
-### Table : Voiture
+### 5. Onglet Administration
+- Tableau de bord complet avec 3 sous-onglets:
+  - **Mouvements**: Historique des entrées/sorties
+  - **Revenus**: Statistiques de fréquentation et revenus sur 14 jours
+  - **Services**: Liste des services en attente
 
-```sql
-CREATE TABLE Voiture (
-    id_voiture INTEGER PRIMARY KEY,
-    immatriculation VARCHAR(20) UNIQUE NOT NULL,
-    hauteur REAL NOT NULL,
-    longueur REAL NOT NULL,
-    est_dans_parking BOOLEAN DEFAULT 0,
-    id_client INTEGER NOT NULL,
-    FOREIGN KEY (id_client) REFERENCES Client(id_client)
-)
-```
+## Tables de la Base de Données
 
-### Table : Abonnement
+L'application vérifie et crée automatiquement les tables manquantes:
 
-```sql
-CREATE TABLE Abonnement (
-    id_abonnement INTEGER PRIMARY KEY,
-    libelle VARCHAR(100) NOT NULL,
-    prix REAL NOT NULL,
-    est_pack_garanti BOOLEAN DEFAULT 0
-)
-```
-
-### Table : Contrat
-
-```sql
-CREATE TABLE Contrat (
-    id_contrat INTEGER PRIMARY KEY,
-    date_debut DATE NOT NULL,
-    date_fin DATE,
-    est_en_cours BOOLEAN DEFAULT 1,
-    id_client INTEGER NOT NULL,
-    id_abonnement INTEGER NOT NULL,
-    FOREIGN KEY (id_client) REFERENCES Client(id_client),
-    FOREIGN KEY (id_abonnement) REFERENCES Abonnement(id_abonnement)
-)
-```
-
-### Table : Placement
-
-```sql
-CREATE TABLE Placement (
-    id_placement INTEGER PRIMARY KEY,
-    date_debut DATETIME NOT NULL,
-    date_fin DATETIME,
-    est_en_cours BOOLEAN DEFAULT 1,
-    id_voiture INTEGER NOT NULL,
-    id_place INTEGER NOT NULL,
-    FOREIGN KEY (id_voiture) REFERENCES Voiture(id_voiture),
-    FOREIGN KEY (id_place) REFERENCES Place(id_place)
-)
-```
-
-### Table : Service
-
-```sql
-CREATE TABLE Service (
-    id_service INTEGER PRIMARY KEY,
-    date_demande DATE NOT NULL,
-    date_service DATE,
-    rapport TEXT
-)
-```
-
-### Table : Maintenance
-
-```sql
-CREATE TABLE Maintenance (
-    id_maintenance INTEGER PRIMARY KEY,
-    id_service INTEGER NOT NULL,
-    id_client INTEGER NOT NULL,
-    FOREIGN KEY (id_service) REFERENCES Service(id_service),
-    FOREIGN KEY (id_client) REFERENCES Client(id_client)
-)
-```
-
-### Table : Entretien
-
-```sql
-CREATE TABLE Entretien (
-    id_entretien INTEGER PRIMARY KEY,
-    id_service INTEGER NOT NULL,
-    id_client INTEGER NOT NULL,
-    FOREIGN KEY (id_service) REFERENCES Service(id_service),
-    FOREIGN KEY (id_client) REFERENCES Client(id_client)
-)
-```
-
-### Table : Livraison
-
-```sql
-CREATE TABLE Livraison (
-    id_livraison INTEGER PRIMARY KEY,
-    id_service INTEGER NOT NULL,
-    adresse TEXT,
-    heure VARCHAR(10),
-    id_client INTEGER NOT NULL,
-    FOREIGN KEY (id_service) REFERENCES Service(id_service),
-    FOREIGN KEY (id_client) REFERENCES Client(id_client)
-)
-```
-
-### Table : Voiturier
-
-```sql
-CREATE TABLE Voiturier (
-    num_voiturier INTEGER PRIMARY KEY AUTOINCREMENT
-)
-```
-
-### Table : Statistiques_Frequentation
-
-```sql
-CREATE TABLE Statistiques_Frequentation (
-    id_stat INTEGER PRIMARY KEY,
-    date_stat DATE NOT NULL,
-    nb_entrees INTEGER DEFAULT 0,
-    nb_sorties INTEGER DEFAULT 0,
-    taux_occupation REAL,
-    revenue_journalier REAL,
-    id_parking INTEGER NOT NULL,
-    FOREIGN KEY (id_parking) REFERENCES Parking(id_parking)
-)
-```
+- **Voiturier**: Gestion des voituriers (3 par défaut)
+- **Statistiques_Frequentation**: Données historiques du parking
+- **Maintenance**: Demandes de maintenance
+- **Entretien**: Demandes d'entretien
+- **Livraison**: Demandes de livraison avec adresse et heure
 
 ## Utilisation
 
-### Créer la base de données
+### Démarrage
 
 ```bash
-python partie3.py
+python partie4.py
 ```
 
-Cette commande va :
-1. Créer le fichier `dreampark.db`
-2. Créer toutes les tables
-3. Insérer des données de test :
-   - 1 parking avec 4 niveaux
-   - 200 places de stationnement (50 par niveau A, B, C, D)
-   - 5 clients
-   - 5 véhicules
-   - 2 types d'abonnements
-   - 4 contrats
-   - 3 voituriers
-   - 1 placement en cours
-   - 2 services
-   - 30 jours de statistiques
+### Opérations de Base
 
-### Consulter la base de données
+#### Entrée d'un Véhicule
+1. Aller dans l'onglet "Accès Entrée"
+2. Choisir l'accès (Nord ou Sud)
+3. Saisir l'immatriculation (ou cliquer sur "Scanner")
+4. Choisir le mode de paiement
+5. Cliquer sur "VALIDER L'ENTRÉE"
 
-```bash
-sqlite3 dreampark.db
+Si le véhicule n'existe pas, un formulaire d'enregistrement s'affiche automatiquement.
+
+#### Sortie d'un Véhicule
+1. Aller dans l'onglet "Accès Sortie"
+2. Choisir l'accès de sortie
+3. Saisir le ticket ou l'immatriculation
+4. Cliquer sur "VALIDER LA SORTIE"
+5. Le tarif sera calculé et affiché automatiquement
+
+#### Demander un Service
+1. Aller dans l'onglet "Services"
+2. Choisir le type de service:
+   - Livraison: Remplir nom, adresse et heure
+   - Entretien: Saisir l'immatriculation
+   - Maintenance: Saisir l'immatriculation
+3. Cliquer sur le bouton correspondant
+
+#### Consulter les Statistiques
+1. Aller dans l'onglet "Admin"
+2. Cliquer sur "Actualiser" pour mettre à jour les données
+3. Naviguer entre les sous-onglets:
+   - Mouvements: Historique complet
+   - Revenus: Performance financière
+   - Services: Demandes en cours
+
+## Système de Tarification
+
+- **Standard**: Tarif horaire (minimum 1 heure)
+- **Abonné**: Tarif forfaitaire de 5.50€
+- **Super Abonné (Pack Garanti)**: Gratuit
+
+## Gestion du Pack Garanti
+
+Les super abonnés bénéficient du Pack Garanti:
+- Accès garanti même si le parking est complet
+- Service valet automatique
+- Stationnement dans un parking partenaire si nécessaire
+- Gratuit
+
+## Fonctionnalités Avancées
+
+### Système de Voituriers
+- Attribution automatique d'un voiturier pour chaque opération
+- 3 voituriers disponibles en rotation
+- Affichage du numéro de voiturier assigné
+
+### Panneaux d'Affichage Extérieurs
+- Mise à jour en temps réel du nombre de places
+- Division équitable entre les 2 accès
+- Code couleur dynamique:
+  - Vert: Plus de 25 places
+  - Orange: Entre 5 et 25 places
+  - Rouge: Moins de 5 places
+
+### Système de Téléportation
+- Simulation du transport automatique des véhicules
+- Affichage du processus de téléportation
+- Messages détaillés pour l'entrée et la sortie
+
+## Gestion des Erreurs
+
+L'application gère automatiquement:
+- Véhicules non enregistrés (proposition d'enregistrement)
+- Véhicules déjà dans le parking
+- Tentatives de sortie avec ticket invalide
+- Services demandés par des non-abonnés
+- Places incompatibles avec les dimensions du véhicule
+- Tables manquantes dans la base de données
+
+## Statistiques Générées Automatiquement
+
+Au premier lancement, l'application génère:
+- 30 jours de statistiques de fréquentation
+- Données aléatoires réalistes:
+  - Entrées: 80-150 par jour
+  - Sorties: 75-145 par jour
+  - Taux d'occupation: 45%-95%
+  - Revenus: 800€-1500€ par jour
+
+
+## Notes Importantes
+
+- L'application utilise `check_same_thread=False` pour SQLite en raison de l'interface graphique
+- Les panneaux d'affichage se mettent à jour après chaque entrée/sortie
+- Les statistiques d'administration doivent être actualisées manuellement
+- Tous les services sont réservés aux abonnés uniquement
+
+## Dépannage
+
+### La base de données n'existe pas
+```
+Erreur: Table 'X' manquante dans la base de données!
+Solution: Exécutez 'python partie3.py' pour créer la base
 ```
 
-## Exemples de Requêtes SQL
+### Problèmes d'affichage
+- Vérifier que Tkinter est correctement installé
+- Redimensionner la fenêtre si nécessaire (taille minimale: 1100x800)
 
-### Voir tous les clients
-```sql
-SELECT * FROM Client;
-```
+### Tables manquantes
+L'application crée automatiquement:
+- Voiturier
+- Statistiques_Frequentation
+- Maintenance
+- Entretien
+- Livraison
 
-### Voir toutes les places libres
-```sql
-SELECT * FROM Place WHERE est_libre = 1;
-```
-
-### Voir les véhicules actuellement dans le parking
-```sql
-SELECT v.immatriculation, c.nom
-FROM Voiture v
-JOIN Client c ON v.id_client = c.id_client
-WHERE v.est_dans_parking = 1;
-```
-
-### Voir les placements en cours
-```sql
-SELECT p.date_debut, v.immatriculation, pl.niveau, pl.numero
-FROM Placement p
-JOIN Voiture v ON p.id_voiture = v.id_voiture
-JOIN Place pl ON p.id_place = pl.id_place
-WHERE p.est_en_cours = 1;
-```
-
-### Voir les contrats actifs
-```sql
-SELECT c.nom, a.libelle, co.date_debut
-FROM Contrat co
-JOIN Client c ON co.id_client = c.id_client
-JOIN Abonnement a ON co.id_abonnement = a.id_abonnement
-WHERE co.est_en_cours = 1;
-```
-
-### Calculer le taux d'occupation
-```sql
-SELECT 
-    (COUNT(CASE WHEN est_libre = 0 THEN 1 END) * 100.0 / COUNT(*)) as taux_occupation
-FROM Place;
-```
-
-## Données de Test Insérées
-
-### Clients
-- John Doe (Super Abonné, 10 visites)
-- Max Weber (Abonné Standard, 5 visites)
-- John Wee (Non abonné, 0 visite)
-- Claire Durand (Abonné Standard, 8 visites)
-- Pierre Moreau (Super Abonné, 15 visites)
-
-### Véhicules
-- FS-590-VS (John Doe)
-- FS-888-MW (Max Weber)
-- FS-560-VS (John Wee)
-- AB-123-CD (Claire Durand)
-- EF-456-GH (Pierre Moreau) - actuellement dans le parking
-
-### Abonnements
-- Abonnement Standard (30 EUR/mois)
-- Super Abonné - Pack Garanti (60 EUR/mois)
-
-## Relations entre Tables
-
-```
-Parking 1 ----< * Place
-Client 1 ----< * Voiture
-Client * ----< * Abonnement (via Contrat)
-Voiture 1 ----< * Placement >---- 1 Place
-Service 1 ----< 1 Maintenance/Entretien/Livraison
-```
-
-## Réinitialiser la Base de Données
-
-Pour recréer la base de données :
-
-```bash
-rm dreampark.db
-python partie3.py
-```
-
-## Informations Techniques
-
-- Base de données : SQLite 3
-- Encodage : UTF-8
-- Format des dates : YYYY-MM-DD
-- Format des dates/heures : YYYY-MM-DD HH:MM:SS
