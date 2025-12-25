@@ -620,7 +620,10 @@ Votre véhicule est en cours de téléportation...
             self.view.text_resultat_entree.insert(tk.END, message)
             messagebox.showinfo("Succès", f"Entrée validée!\nTicket: {ticket}")
             self.view.entry_immat_entree.delete(0, tk.END)
+
+            # Mettre à jour l'affichage ET rafraîchir les panneaux
             self.update_display()
+            self.view.root.update_idletasks()  # Force la mise à jour immédiate de l'interface
         else:
             self.view.text_resultat_entree.insert(tk.END, result)
             messagebox.showerror("Erreur", result)
@@ -665,7 +668,10 @@ Merci et à bientôt!"""
             self.view.text_resultat_sortie.insert(tk.END, message)
             messagebox.showinfo("Succès", f"Sortie validée!\nMontant: {tarif:.2f}€")
             self.view.entry_immat_sortie.delete(0, tk.END)
+
+            # Mettre à jour l'affichage ET rafraîchir les panneaux
             self.update_display()
+            self.view.root.update_idletasks()  # Force la mise à jour immédiate
         else:
             self.view.text_resultat_sortie.insert(tk.END, result)
             messagebox.showerror("Erreur", result)
@@ -737,8 +743,13 @@ Merci et à bientôt!"""
         """Met à jour l'affichage"""
         stats = self.model.obtenir_statistiques()
 
-        # Panneaux d'affichage (même nombre pour les 2 accès)
-        places_par_acces = stats['places_libres'] // 2
+        # Récupérer le nombre réel de places libres depuis la base de données
+        self.model.cursor.execute("SELECT nb_places_libres FROM Parking LIMIT 1")
+        result = self.model.cursor.fetchone()
+        places_libres_total = result[0] if result else stats['places_libres']
+
+        # Panneaux d'affichage (diviser équitablement entre les 2 accès)
+        places_par_acces = places_libres_total // 2
 
         for panneau, label in [(self.view.panneau_nord, self.view.label_places_nord),
                                (self.view.panneau_sud, self.view.label_places_sud)]:
@@ -746,11 +757,11 @@ Merci et à bientôt!"""
 
             # Couleur selon disponibilité
             if places_par_acces < 5:
-                color = '#e74c3c'
+                color = '#e74c3c'  # Rouge
             elif places_par_acces < 25:
-                color = '#f39c12'
+                color = '#f39c12'  # Orange
             else:
-                color = '#27ae60'
+                color = '#27ae60'  # Vert
 
             panneau.config(bg=color)
             label.config(bg=color)
